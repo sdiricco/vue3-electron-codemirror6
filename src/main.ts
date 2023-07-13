@@ -1,15 +1,20 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import { createPinia } from 'pinia'
-import router from './router'
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import App from "./App.vue";
+import router from "./router";
+import "./samples/node-api";
+import './index.css'
 
-createApp(App)
-  .use(router)
-  .use(Antd)
-  .use(createPinia())
-  .mount('#app')
-  .$nextTick(() => {
-    postMessage({ payload: 'removeLoading' }, '*')
-  })
+// Plugins
+
+const pinia = createPinia();
+
+const app = createApp(App);
+
+app.use(pinia).use(router);
+
+router.isReady().then(() => {
+  app.mount("#app").$nextTick(() => {
+    postMessage({ payload: "removeLoading" }, "*");
+  });
+});

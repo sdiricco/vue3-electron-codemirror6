@@ -1,21 +1,20 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import AboutView from '@/views/AboutView.vue'
+import { RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router';
+
+const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: () => import('@/views/HomePage.vue'),
+  }
+]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: AboutView
-    }
-  ]
+  routes
 })
 
 export default router

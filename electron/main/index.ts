@@ -1,7 +1,23 @@
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron'
+// The built directory structure
+//
+// ├─┬ dist-electron
+// │ ├─┬ main
+// │ │ └── index.js    > Electron-Main
+// │ └─┬ preload
+// │   └── index.js    > Preload-Scripts
+// ├─┬ dist
+// │ └── index.html    > Electron-Renderer
+//
+process.env.DIST_ELECTRON = join(__dirname, '..')
+process.env.DIST = join(process.env.DIST_ELECTRON, '../dist')
+process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
+  ? join(process.env.DIST_ELECTRON, '../public')
+  : process.env.DIST
+
+import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
-import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import * as mainHooks from "./mainHooks"
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -14,52 +30,37 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
-const nodeEnv = process.env.NODE_ENV;
-const isTest = process.env.IS_TEST;
-const isDev = nodeEnv !== "production";
-
-
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
-
-export const ROOT_PATH = {
-  // /dist
-  dist: join(__dirname, '../..'),
-  // /dist or /public
-  public: join(__dirname, app.isPackaged ? '../..' : '../../../public'),
-}
+// Remove electron security warnings
+// This warning only shows in development mode
+// Read more on https://www.electronjs.org/docs/latest/tutorial/security
+// process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 let win: BrowserWindow | null = null
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js')
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin
-const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`
-const indexHtml = join(ROOT_PATH.dist, 'index.html')
+const url = process.env.VITE_DEV_SERVER_URL
+const indexHtml = join(process.env.DIST, 'index.html')
 
 async function createWindow() {
-
-  if (isDev && !isTest) {
-    try {
-      await installExtension(VUEJS_DEVTOOLS);
-    } catch (e: any) {
-      console.error("Vue Devtools failed to install:", e.toString());
-    }
-  }
-
   win = new BrowserWindow({
     title: 'Main window',
-    icon: join(ROOT_PATH.public, 'favicon.ico'),
+    icon: join(process.env.PUBLIC, 'favicon.ico'),
     webPreferences: {
       preload,
+      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
+      // Consider using contextBridge.exposeInMainWorld
+      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
     },
   })
 
-  if (app.isPackaged) {
-    win.loadFile(indexHtml)
-  } else {
+  if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
-    // win.webContents.openDevTools()
+    // Open devTool if the app is not packaged
+    win.webContents.openDevTools()
+  } else {
+    win.loadFile(indexHtml)
   }
 
   // Test actively push message to the Electron-Renderer
@@ -72,6 +73,7 @@ async function createWindow() {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
   })
+  mainHooks.onWindowCreated(win)
 }
 
 app.whenReady().then(createWindow)
@@ -98,22 +100,19 @@ app.on('activate', () => {
   }
 })
 
-// new window example arg: new windows url
+// New window example arg: new windows url
 ipcMain.handle('open-win', (event, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       preload,
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   })
 
-  if (app.isPackaged) {
-    childWindow.loadFile(indexHtml, { hash: arg })
+  if (process.env.VITE_DEV_SERVER_URL) {
+    childWindow.loadURL(`${url}#${arg}`)
   } else {
-    childWindow.loadURL(`${url}/#${arg}`)
-    // childWindow.webContents.openDevTools({ mode: "undocked", activate: true })
+    childWindow.loadFile(indexHtml, { hash: arg })
   }
-})
-
-ipcMain.handle("electron/show-message-box", async(_evt, msg)=>{
-  await dialog.showMessageBox(win, {message: msg, type:"question", title: "Message" })
 })
