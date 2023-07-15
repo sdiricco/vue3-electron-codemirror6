@@ -13,19 +13,40 @@ export function handleDialogs(win: BrowserWindow) {
   ipcMain.handle(Channel.ShowMessageBox, async (_evt, data) => {
     const result = {
       data: null,
-      error: null
-    }
+      error: null,
+    };
     const error: IError = {
       code: 0,
-      message: "Error during opening message box dialog electron API",
-      details: '',
+      message: "Error executing <showMessageBox()> electron API",
+      details: "",
       type: "electron",
       channel: Channel.ShowMessageBox,
     };
     try {
-      result.data = await dialog.showMessageBox(win, data)
+      result.data = await dialog.showMessageBox(win, data);
     } catch (e) {
-      result.error = {...error, ...{details: e.message} }
+      result.error = { ...error, ...{ details: e.message } };
+    }
+    return result;
+  });
+
+  /* SHOW OPEN DIALOG */
+  ipcMain.handle(Channel.ShowOpenDialog, async (_evt, data) => {
+    const result = {
+      data: null,
+      error: null,
+    };
+    const error: IError = {
+      code: 0,
+      message: "Error executing <showOpenDialog()> electron API",
+      details: "",
+      type: "electron",
+      channel: Channel.ShowMessageBox,
+    };
+    try {
+      result.data = await dialog.showOpenDialog(win, data);
+    } catch (e) {
+      result.error = { ...error, ...{ details: e.message } };
     }
     return result;
   });

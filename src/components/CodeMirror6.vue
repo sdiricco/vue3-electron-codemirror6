@@ -9,6 +9,7 @@ import { markdown } from "@codemirror/lang-markdown";
 import { oneDark, color } from "@codemirror/theme-one-dark";
 import { search } from "@codemirror/search";
 import { languages } from "@codemirror/language-data";
+import { autocompletion } from "@codemirror/autocomplete";
 
 let state = EditorState.create({
   doc: "",
@@ -17,6 +18,9 @@ let state = EditorState.create({
     search({ top: true }),
     oneDark,
     markdown({ codeLanguages: languages }),
+    autocompletion({
+      override: []
+    })
     
   ],
 });
