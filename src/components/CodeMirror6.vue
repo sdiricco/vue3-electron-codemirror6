@@ -2,7 +2,7 @@
   <div id="editor" class="editor"></div>
 </template>
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount, watch } from "vue";
 import { basicSetup, EditorView } from "codemirror";
 import { EditorState } from "@codemirror/state";
 import { markdown } from "@codemirror/lang-markdown";
@@ -10,6 +10,14 @@ import { oneDark, color } from "@codemirror/theme-one-dark";
 import { search } from "@codemirror/search";
 import { languages } from "@codemirror/language-data";
 import { autocompletion } from "@codemirror/autocomplete";
+
+const props = defineProps({
+  file: {},
+});
+
+let editorState: EditorState | null = null;
+
+function createEditor() {}
 
 let state = EditorState.create({
   doc: "",
@@ -19,9 +27,8 @@ let state = EditorState.create({
     oneDark,
     markdown({ codeLanguages: languages }),
     autocompletion({
-      override: []
-    })
-    
+      override: [],
+    }),
   ],
 });
 
@@ -37,6 +44,16 @@ onMounted(() => {
     el.style.background = color.background;
   }
 });
+
+watch(props, () =>{
+  updateValue(props.file.value)
+})
+
+function updateValue(value:string) {
+  view.dispatch({
+    changes: { from: 0, to: view.state.doc.length, insert:value },
+  });
+}
 
 onBeforeUnmount(() => {
   view.destroy();
