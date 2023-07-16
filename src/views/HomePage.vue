@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import CodeMirror6 from "@/components/CodeMirror6.vue";
 import { showMessageBox, onMenuAction, openDialog } from "@/electronRenderer";
+import {Menu} from "../types"
 async function onClickOpenDialog() {
   const response = await showMessageBox({
     message: "Hello, this is the message content",
@@ -18,9 +19,11 @@ async function onClickOpenDialog() {
 
 onMenuAction(async(data:any)=> {
   console.log(data)
-  const response = await openDialog({})
-  console.log(response)
+  if(data.id === Menu.File.Open){
+    const response = await openDialog({})
+    console.log(response)
+  }
 })
 </script>
-
+6
 <style scoped></style>

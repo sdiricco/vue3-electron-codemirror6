@@ -23,9 +23,21 @@ export interface ISaveDialogReturnValue {
   error: IError
 }
 
+enum File {
+  New = "file/new",
+  Open = "file/open",
+}
+export const Menu = {
+  File: File,
+}
+
 export enum Channel {
   ShowMessageBox = "electron/show-message-box",
   ShowSaveDialog = "electron/show-save-dialog",
   ShowOpenDialog = "electron/show-open-dialog",
   Menu = "electron/menu"
 }
+
+
+
+
