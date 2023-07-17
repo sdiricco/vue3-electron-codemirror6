@@ -1,6 +1,7 @@
 <template>
   <div id="editor" class="editor"></div>
 </template>
+
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount, watch } from "vue";
 import { basicSetup, EditorView } from "codemirror";
