@@ -15,14 +15,14 @@ import { autocompletion } from "@codemirror/autocomplete";
 /* VARIABLES */
 /*********************************************************/
 let state: EditorState | null = null;
-let view: EditorView | null= null;
-let editorRef: HTMLElement | null = null; 
+let view: EditorView | null = null;
+let editorRef: HTMLElement | null = null;
 
 /*********************************************************/
 /* PROPS */
 /*********************************************************/
 const props = defineProps({
-  value: String
+  value: String,
 });
 
 /*********************************************************/
@@ -50,10 +50,16 @@ function createEditorState() {
   });
 }
 
-function createEditorView(editorRef:HTMLElement, state: EditorState){
+function createEditorView(editorRef: HTMLElement, state: EditorState) {
+  let myBaseTheme = EditorView.baseTheme({
+    ".cm-editor": { height: "100%" }
+  })
   return new EditorView({
     state,
     parent: editorRef,
+    extensions: [
+      myBaseTheme
+    ]
   });
 }
 
@@ -63,21 +69,21 @@ function updateValue(value: string) {
   });
 }
 
-function createEditor(id: string){
+function createEditor(id: string) {
   editorRef = document.getElementById(id);
   if (!editorRef) {
     return;
   }
   editorRef.style.background = color.background;
   state = createEditorState();
-  view = createEditorView(editorRef, state)
+  view = createEditorView(editorRef, state);
 }
 
 /*********************************************************/
 /* HOOKS */
 /*********************************************************/
 onMounted(() => {
-  createEditor('editor');
+  createEditor("editor");
 });
 
 onBeforeUnmount(() => {
@@ -90,4 +96,11 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100vh;
 }
+
+.editor :deep(.cm-editor){
+  height:100%
+}
+
+
 </style>
+
