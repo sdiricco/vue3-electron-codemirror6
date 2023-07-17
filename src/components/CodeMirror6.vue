@@ -11,52 +11,77 @@ import { search } from "@codemirror/search";
 import { languages } from "@codemirror/language-data";
 import { autocompletion } from "@codemirror/autocomplete";
 
+/*********************************************************/
+/* VARIABLES */
+/*********************************************************/
+let state: EditorState | null = null;
+let view: EditorView | null= null;
+let editorRef: HTMLElement | null = null; 
+
+/*********************************************************/
+/* PROPS */
+/*********************************************************/
 const props = defineProps({
-  file: {},
+  value: String
 });
 
-let editorState: EditorState | null = null;
-
-function createEditor() {}
-
-let state = EditorState.create({
-  doc: "",
-  extensions: [
-    basicSetup,
-    search({ top: true }),
-    oneDark,
-    markdown({ codeLanguages: languages }),
-    autocompletion({
-      override: [],
-    }),
-  ],
+/*********************************************************/
+/* WATCHER */
+/*********************************************************/
+watch(props, () => {
+  updateValue(props.value);
 });
 
-let view: EditorView = new EditorView();
-
-onMounted(() => {
-  const el = document.getElementById("editor");
-  if (el) {
-    view = new EditorView({
-      state,
-      parent: el,
-    });
-    el.style.background = color.background;
-  }
-});
-
-watch(props, () =>{
-  updateValue(props.file.value)
-})
-
-function updateValue(value:string) {
-  view.dispatch({
-    changes: { from: 0, to: view.state.doc.length, insert:value },
+/*********************************************************/
+/* FUNCTIONS */
+/*********************************************************/
+function createEditorState() {
+  return EditorState.create({
+    doc: "",
+    extensions: [
+      basicSetup,
+      search({ top: true }),
+      oneDark,
+      markdown({ codeLanguages: languages }),
+      autocompletion({
+        override: [],
+      }),
+    ],
   });
 }
 
+function createEditorView(editorRef:HTMLElement, state: EditorState){
+  return new EditorView({
+    state,
+    parent: editorRef,
+  });
+}
+
+function updateValue(value: string) {
+  view?.dispatch({
+    changes: { from: 0, to: view.state.doc.length, insert: value },
+  });
+}
+
+function createEditor(id: string){
+  editorRef = document.getElementById(id);
+  if (!editorRef) {
+    return;
+  }
+  editorRef.style.background = color.background;
+  state = createEditorState();
+  view = createEditorView(editorRef, state)
+}
+
+/*********************************************************/
+/* HOOKS */
+/*********************************************************/
+onMounted(() => {
+  createEditor('editor');
+});
+
 onBeforeUnmount(() => {
-  view.destroy();
+  view?.destroy();
 });
 </script>
 
