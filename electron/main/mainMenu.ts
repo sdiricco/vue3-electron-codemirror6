@@ -22,7 +22,6 @@ export function buildMenuFromTemplate(window, template) {
 /* CREATE MENU */
 export function create(win, onClickItem) {
   window = win;
-  clickCallback = onClickItem;
   let __template = [
     {
       id: "file",
@@ -34,14 +33,14 @@ export function create(win, onClickItem) {
           parentId: "file",
           label: "New",
           accelerator: "Ctrl + N",
-          click: (menuItem) => clickCallback({...optionsFiltered(menuItem)}),
+          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)}),
         },
         {
           id: "file/open",
           parentId: "file",
           label: "Open",
           accelerator: "Ctrl + O",
-          click: (menuItem) => clickCallback({...optionsFiltered(menuItem)})
+          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
         },
         {
           id: "file/separator-1",
@@ -53,14 +52,14 @@ export function create(win, onClickItem) {
           parentId: "file",
           label: "Save",
           accelerator: "Ctrl + S",
-          click: (menuItem) => clickCallback({...optionsFiltered(menuItem)})
+          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
         },
         {
           id: "file/saveas",
           parentId: "file",
           label: "Save as..",
           accelerator: "Ctrl + Shift + S",
-          click: (menuItem) => clickCallback({...optionsFiltered(menuItem)})
+          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
         },
         {
           id: "file/separator-2",
@@ -71,7 +70,7 @@ export function create(win, onClickItem) {
           id: "file/preferences",
           parentId: "file",
           label: "Preferences",
-          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
+          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)}),
         },
         {
           id: "file/separator-3",

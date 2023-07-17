@@ -50,4 +50,5 @@ export function handleDialogs(win: BrowserWindow) {
     }
     return result;
   });
+
 }

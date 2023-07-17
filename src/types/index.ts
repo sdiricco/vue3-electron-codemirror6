@@ -23,12 +23,10 @@ export interface ISaveDialogReturnValue {
   error: IError
 }
 
-enum File {
-  New = "file/new",
-  Open = "file/open",
-}
-export const Menu = {
-  File: File,
+export enum Menu {
+  openFile = "file/open",
+  newFile = "file/new",
+  preferences = "file/preferences"
 }
 
 export enum Channel {
