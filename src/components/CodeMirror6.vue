@@ -4,23 +4,11 @@
 
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
-import { onMounted, onBeforeUnmount, watch, computed } from "vue";
+import { onMounted, onBeforeUnmount, watch, computed, reactive } from "vue";
 import { basicSetup, EditorView} from "codemirror";
 import { EditorState, Extension, StateEffect } from "@codemirror/state";
 import { markdown } from "@codemirror/lang-markdown";
-import { oneDark, color } from "@codemirror/theme-one-dark";
-/*********************************************************/
-/* THEMES */
-/*********************************************************/
-import { basicLight } from 'cm6-theme-basic-light'
-import { basicDark } from 'cm6-theme-basic-dark'
-import { solarizedDark } from 'cm6-theme-solarized-dark'
-import { solarizedLight } from 'cm6-theme-solarized-light'
-import { materialDark } from 'cm6-theme-material-dark'
-import { nord } from 'cm6-theme-nord'
-import { gruvboxLight } from 'cm6-theme-gruvbox-light'
-import { gruvboxDark } from 'cm6-theme-gruvbox-dark'
-
+import { Compartment } from '@codemirror/state'
 import { search } from "@codemirror/search";
 import { languages } from "@codemirror/language-data";
 import { autocompletion } from "@codemirror/autocomplete";
@@ -29,15 +17,13 @@ import { autocompletion } from "@codemirror/autocomplete";
 /*********************************************************/
 /* PROPS */
 /*********************************************************/
-
 interface Props {
   value?: string
   theme?: Extension
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  value: '',
-  theme: () => oneDark
+  value: ''
 })
 
 /*********************************************************/
@@ -49,19 +35,17 @@ let editorRef: HTMLElement | null = null;
 
 const editorId = `editor-${uuidv4()}`
 
-let editorExtensions: Array<Extension> = [
+const themeConfig = new Compartment()
+
+let extensions: Array<Extension> = [
   basicSetup,
   search({ top: true }),
-  props.theme,
   markdown({ codeLanguages: languages }),
   autocompletion({
     override: [],
   }),
+  themeConfig.of(props.theme? [props.theme] : [])
 ];
-
-
-
-
 
 /*********************************************************/
 /* COMPUTED */
@@ -72,26 +56,42 @@ const theme = computed(()=> props.theme);
 /*********************************************************/
 /* WATCHER */
 /*********************************************************/
-watch(editorValue, () => {
-  updateValue(editorValue.value);
+watch(editorValue, (value) => {
+  updateValue(value);
 });
 
-watch(theme, () => {
-  updateExtensions()
+watch(theme, (value) => {
+  value && updateTheme(value)
 })
 
-
-
 /*********************************************************/
-/* FUNCTIONS */
+/* EDITOR FUNCTIONS */
 /*********************************************************/
-function createEditorState() {
+
+//create editor
+function createEditor(id: string, extensions:Array<Extension>) {
+  editorRef = document.getElementById(id);
+  if (!editorRef) {
+    return;
+  }
+  state = createEditorState(extensions);
+  view = createEditorView(editorRef, state);
+}
+
+//destroy editor
+function destroyEditor(){
+  view?.destroy();
+}
+
+//create editor state
+function createEditorState(extensions:Array<Extension>) {
   return EditorState.create({
     doc: "",
-    extensions: editorExtensions,
+    extensions: extensions,
   });
 }
 
+//create editor view
 function createEditorView(editorRef: HTMLElement, state: EditorState) {
   return new EditorView({
     state,
@@ -99,39 +99,27 @@ function createEditorView(editorRef: HTMLElement, state: EditorState) {
   });
 }
 
-/*********************************************************/
-/* UPDATE EDITOR FUNCTIONS */
-/*********************************************************/
+//Update value
 function updateValue(value: string) {
   view?.dispatch({
     changes: { from: 0, to: view.state.doc.length, insert: value },
   });
 }
 
-function updateExtensions(){
+//Update theme
+function updateTheme(theme: Extension) {
+  console.log('theme', theme)
+
   view?.dispatch({
-      effects: StateEffect.reconfigure.of(editorExtensions)
+      effects: themeConfig.reconfigure([theme])
   });
-}
-
-function createEditor(id: string) {
-  editorRef = document.getElementById(id);
-  if (!editorRef) {
-    return;
-  }
-  state = createEditorState();
-  view = createEditorView(editorRef, state);
-}
-
-function destroyEditor(){
-  view?.destroy();
 }
 
 /*********************************************************/
 /* HOOKS */
 /*********************************************************/
 onMounted(() => {
-  createEditor(editorId);
+  createEditor(editorId, extensions);
 });
 
 onBeforeUnmount(() => {
@@ -144,5 +132,32 @@ onBeforeUnmount(() => {
 
 .editor :deep(.cm-editor) {
   height: 100%;
+}
+
+/*********************************************************/
+/* DEFAULT SEARCH PANEL */
+/*********************************************************/
+.editor :deep(.cm-panels.cm-panels-top){
+  border: none;
+}
+
+/*inputs*/
+.editor :deep(.cm-search.cm-panel .cm-textfield){
+  outline: none;
+  border-radius: 2px;
+}
+
+/*buttons*/
+.editor :deep(.cm-search.cm-panel .cm-button){
+  background: transparent;
+  cursor: pointer;
+  border-radius: 2px;
+  outline: none;
+}
+
+/*close button*/
+.editor :deep(.cm-search.cm-panel button){
+  color: inherit;
+  
 }
 </style>

@@ -65,6 +65,7 @@ import ToggleButton from "primevue/togglebutton";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 import Tooltip from "primevue/tooltip";
+import Listbox from 'primevue/listbox';
 /*****************************************************************************/
 /* PRIME VUE IMPORT DIRECTIVE */
 /*****************************************************************************/
@@ -139,6 +140,7 @@ app.component("Tag", Tag);
 app.component("Textarea", Textarea);
 app.component("ToggleButton", ToggleButton);
 app.component("Toast", Toast);
+app.component("Listbox", Listbox)
 
 /*****************************************************************************/
 /* PRIME VUE - DIRECTIVE */

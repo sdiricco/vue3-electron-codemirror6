@@ -1,4 +1,38 @@
-body{
-    padding: 0px;
+body {
+    font-family: var(--font-family);
+    color: var(--text-color);
     margin: 0px;
+}
+
+.p-button:focus{
+    box-shadow: none !important;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon:focus{
+    box-shadow: none !important;
+
+}
+
+.p-dropdown:not(.p-disabled).p-focus{
+    box-shadow: none !important;
+    border-color: #ced4da !important;
+}
+
+.p-listbox.p-focus{
+    box-shadow: none !important;
+}
+.p-listbox .p-listbox-list .p-listbox-item{
+    padding: 0.5rem 1rem;
+}
+
+.p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:not(.p-disabled):focus{
+    box-shadow: none;
+}
+
+.p-dialog .p-dialog-header{
+    padding: 0px;
+}
+
+.p-dialog .p-dialog-content{
+    padding:0px;
 }
