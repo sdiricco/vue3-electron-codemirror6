@@ -1,4 +1,9 @@
 <template>
+  <Toast>
+    <template #icon>
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    </template>
+  </Toast>
   <CodeMirror6 :value="mainStore.value" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.value = v" />
   <Dialog
     v-model:visible="visible"
@@ -47,6 +52,13 @@ import { nord } from 'cm6-theme-nord'
 import { gruvboxLight } from 'cm6-theme-gruvbox-light'
 import { gruvboxDark } from 'cm6-theme-gruvbox-dark'
 
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
+const showSuccess = () => {
+    toast.add({ severity: 'info',  detail: 'Salvataggio in corso..', life: 1000, closable: false, summary: "Salva" });
+};
+
 const mainStore = useMainStore();
 
 const visible = ref(false);
@@ -89,6 +101,7 @@ onMenuAction(async (data: any) => {
       await mainStore.openFile();
       break;
     case Types.Menu.saveFile:
+      showSuccess();
       await mainStore.saveFile();
       break;
     case Types.Menu.preferences:

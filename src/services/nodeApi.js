@@ -31,6 +31,6 @@ export async function readFile(filePath = "") {
 }
 
 //save file
-export async function saveFile({filePath = null, value = null}){
+export async function saveFile({filePath = '', value = ''}){
   return fsProm.writeFile(filePath, value);
 }

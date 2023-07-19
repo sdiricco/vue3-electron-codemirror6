@@ -29,7 +29,14 @@ export const useMainStore = defineStore("main", {
     },
     async saveFile() {
       try {
-        console.log("Saveing file")
+        const filePath = this.file.path || ''
+        const value = this.value || ''
+        if (filePath) {
+          await saveFile({filePath, value})
+          const response = await readFile(filePath);
+          this.file = response;
+          this.value = response.value
+        }
       } catch (error) {
         console.log(error)
       }
