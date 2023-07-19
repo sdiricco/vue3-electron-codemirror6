@@ -14,8 +14,9 @@ process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, '../public')
   : process.env.DIST
 
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
-import { release } from 'os'
+import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import { app, BrowserWindow, shell, ipcMain, session } from 'electron'
+import { release, homedir } from 'os'
 import { join } from 'path'
 import * as mainHooks from "./mainHooks"
 
@@ -59,9 +60,20 @@ async function createWindow() {
     win.loadURL(url)
     // Open devTool if the app is not packaged
     win.webContents.openDevTools()
+    const vueDevToolsPath = join(
+      homedir(),
+      '/.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.0_0/'
+    )
+  
+    await session.defaultSession.loadExtension(vueDevToolsPath)
   } else {
     win.loadFile(indexHtml)
   }
+
+
+
+
+
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {

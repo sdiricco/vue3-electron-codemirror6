@@ -1,5 +1,5 @@
 <template>
-  <CodeMirror6 :value="editorValue" class="cm6-editor" :theme="selectedTheme.value" />
+  <CodeMirror6 :value="mainStore.value" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.value = v" />
   <Dialog
     v-model:visible="visible"
     position="top"
@@ -82,14 +82,14 @@ const items = ref([
   },
 ]);
 
-const editorValue = computed(() => {
-  return mainStore.file?.value || "";
-});
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
     case Types.Menu.openFile:
       await mainStore.openFile();
+      break;
+    case Types.Menu.saveFile:
+      await mainStore.saveFile();
       break;
     case Types.Menu.preferences:
       console.log('basicLightHighlightStyle', basicLightHighlightStyle)

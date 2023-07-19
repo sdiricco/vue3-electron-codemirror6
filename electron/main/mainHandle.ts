@@ -51,4 +51,25 @@ export function handleDialogs(win: BrowserWindow) {
     return result;
   });
 
+
+  /* SHOW SAVE DIALOG */
+  ipcMain.handle(Channel.ShowSaveDialog, async (_evt, data) => {
+    const result = {
+      data: null,
+      error: null,
+    };
+    const error: IError = {
+      code: 0,
+      message: "Error executing <showSaveDialog()> electron API",
+      details: "",
+      type: "electron",
+      channel: Channel.ShowSaveDialog,
+    };
+    try {
+      result.data = await dialog.showSaveDialog(win, data);
+    } catch (e) {
+      result.error = { ...error, ...{ details: e.message } };
+    }
+    return result;
+  });
 }

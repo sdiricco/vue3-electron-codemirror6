@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
-import { onMounted, onBeforeUnmount, watch, computed, reactive } from "vue";
+import { onMounted, onBeforeUnmount, watch, computed, ref } from "vue";
 import { basicSetup, EditorView} from "codemirror";
 import { EditorState, Extension, StateEffect } from "@codemirror/state";
 import { markdown } from "@codemirror/lang-markdown";
@@ -12,6 +12,8 @@ import { Compartment } from '@codemirror/state'
 import { search } from "@codemirror/search";
 import { languages } from "@codemirror/language-data";
 import { autocompletion } from "@codemirror/autocomplete";
+
+const emit = defineEmits(['input'])
 
 
 /*********************************************************/
@@ -29,6 +31,8 @@ const props = withDefaults(defineProps<Props>(), {
 /*********************************************************/
 /* VARIABLES */
 /*********************************************************/
+let sync_val = ref('')
+
 let state: EditorState | null = null;
 let view: EditorView | null = null;
 let editorRef: HTMLElement | null = null;
@@ -43,6 +47,9 @@ let extensions: Array<Extension> = [
   markdown({ codeLanguages: languages }),
   autocompletion({
     override: [],
+  }),
+  EditorView.updateListener.of(function(e) {
+      sync_val.value = e.state.doc.toString();
   }),
   themeConfig.of(props.theme? [props.theme] : [])
 ];
@@ -62,6 +69,10 @@ watch(editorValue, (value) => {
 
 watch(theme, (value) => {
   value && updateTheme(value)
+})
+
+watch(sync_val, (value)=> {
+  emit('input', value)
 })
 
 /*********************************************************/
