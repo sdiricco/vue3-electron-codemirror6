@@ -8,4 +8,5 @@ export function onWindowCreated(window: BrowserWindow) {
     mainHandle.sendToClient(window, Channel.Menu, data);
   })
   mainHandle.handleDialogs(window)
+  mainHandle.handleWindow(window)
 }

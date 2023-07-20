@@ -26,6 +26,7 @@ export interface ISaveDialogReturnValue {
 export enum Menu {
   openFile = "file/open",
   saveFile = "file/save",
+  saveAsFile = "file/save-as",
   newFile = "file/new",
   preferences = "file/preferences"
 }
@@ -34,6 +35,7 @@ export enum Channel {
   ShowMessageBox = "electron/show-message-box",
   ShowSaveDialog = "electron/show-save-dialog",
   ShowOpenDialog = "electron/show-open-dialog",
+  SetWindowTitle = "electron/set-window-title",
   Menu = "electron/menu"
 }
 

@@ -73,3 +73,26 @@ export function handleDialogs(win: BrowserWindow) {
     return result;
   });
 }
+
+export function handleWindow(win: BrowserWindow){
+  /* SET WINDOW TITLE */
+  ipcMain.handle(Channel.SetWindowTitle, async (_evt, data) => {
+    const result = {
+      data: null,
+      error: null,
+    };
+    const error: IError = {
+      code: 0,
+      message: "Error executing <SetWindowTitle()> electron API",
+      details: "",
+      type: "electron",
+      channel: Channel.SetWindowTitle,
+    };
+    try {
+      result.data = win.setTitle(data);
+    } catch (e) {
+      result.error = { ...error, ...{ details: e.message } };
+    }
+    return result;
+  });
+}

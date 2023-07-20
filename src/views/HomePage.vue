@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import CodeMirror6 from "@/components/CodeMirror6.vue";
 import { showMessageBox, onMenuAction, openDialog } from "@/electronRenderer";
 import * as Types from "../types";
@@ -97,12 +97,19 @@ const items = ref([
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
+    case Types.Menu.newFile:
+      await mainStore.newFile();
+      break;
     case Types.Menu.openFile:
       await mainStore.openFile();
       break;
     case Types.Menu.saveFile:
-      showSuccess();
       await mainStore.saveFile();
+      showSuccess();
+      break;
+    case Types.Menu.saveAsFile:
+      await mainStore.saveAsFile();
+      showSuccess();
       break;
     case Types.Menu.preferences:
       console.log('basicLightHighlightStyle', basicLightHighlightStyle)
@@ -112,6 +119,17 @@ onMenuAction(async (data: any) => {
       break;
   }
 });
+
+const title = computed(()=> mainStore.file.name)
+const isFileChanged = computed(()=> mainStore.isFileChanged)
+
+watch(title, mainStore.updateWindowTitle )
+
+watch(isFileChanged, mainStore.updateWindowTitle)
+
+onMounted(async ()=> {
+  await mainStore.updateWindowTitle()
+})
 </script>
 <style scoped>
 .cm6-editor {

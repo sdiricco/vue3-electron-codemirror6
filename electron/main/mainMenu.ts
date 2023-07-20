@@ -55,7 +55,7 @@ export function create(win, onClickItem) {
           click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
         },
         {
-          id: "file/saveas",
+          id: "file/save-as",
           parentId: "file",
           label: "Save as..",
           accelerator: "Ctrl + Shift + S",

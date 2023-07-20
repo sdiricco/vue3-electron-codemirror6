@@ -22,6 +22,7 @@ export enum Channel {
   ShowMessageBox = "electron/show-message-box",
   ShowSaveDialog = "electron/show-save-dialog",
   ShowOpenDialog = "electron/show-open-dialog",
+  SetWindowTitle = "electron/set-window-title",
   Menu = "electron/menu",
   LoadThemes = "electron/load-themes"
 }
