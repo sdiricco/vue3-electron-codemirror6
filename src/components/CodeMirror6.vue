@@ -169,6 +169,16 @@ onBeforeUnmount(() => {
 /*close button*/
 .editor :deep(.cm-search.cm-panel button){
   color: inherit;
-  
+}
+
+.editor :deep(label){
+  vertical-align: middle;
+  cursor: pointer;
+
+}
+
+.editor :deep(label input){
+  position: relative;
+  top:2px;
 }
 </style>
