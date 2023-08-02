@@ -18,6 +18,9 @@ import { app, BrowserWindow, shell, ipcMain, session } from 'electron'
 import { release, homedir } from 'os'
 import { join } from 'path'
 import * as mainHooks from "./mainHooks"
+import {loadVueJSExtensionDevTools, openDevTools} from "../utils"
+
+process.platform 
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -57,14 +60,8 @@ async function createWindow() {
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
-    // Open devTool if the app is not packaged
-    win.webContents.openDevTools()
-    const vueDevToolsPath = join(
-      homedir(),
-      '/.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.0_0/'
-    )
-  
-    await session.defaultSession.loadExtension(vueDevToolsPath)
+    await loadVueJSExtensionDevTools()
+    openDevTools(win)
   } else {
     win.loadFile(indexHtml)
   }

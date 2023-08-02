@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { openDialog, saveDialog, setTitle } from "@/electronRenderer";
 import {readFile, saveFile} from "@/services/nodeApi"
 import {Menu} from "../types"
+import {ref} from "vue"
 
 export const useMainStore = defineStore("main", {
   state: () => ({ 
@@ -12,11 +13,12 @@ export const useMainStore = defineStore("main", {
       stat: {},
       value: ''
     },
-    value: "",
+    editorTempValue: "",
+    editorRef: ref(null)
   }),
 
   getters: {
-    isFileChanged: (state) => state.file.value !== state.value 
+    isFileChanged: (state) => state.file.value !== state.editorTempValue 
   },
 
   actions: {
@@ -30,7 +32,7 @@ export const useMainStore = defineStore("main", {
         stat: {},
         value: ''
       },
-      this.value = ''
+      this.editorTempValue = ''
     },
 
     //open file
@@ -39,15 +41,16 @@ export const useMainStore = defineStore("main", {
       try {
         response = await openDialog({})
         if (response.canceled) {
-          return
+          return false;
         }
         const filePath = response.filePaths && response.filePaths.length && response.filePaths[0];
         if (!filePath) {
-          return;
+          return false;
         }
         response = await readFile(filePath);
         this.file = response;
-        this.value = response.value
+        this.editorTempValue = response.value
+        return true;
       } catch (error) {
         console.log(error)
       }
@@ -57,12 +60,12 @@ export const useMainStore = defineStore("main", {
     async saveFile() {
       try {
         const filePath = this.file.path || ''
-        const value = this.value || ''
+        const value = this.editorTempValue || ''
         if (filePath) {
           await saveFile({filePath, value})
           const response = await readFile(filePath);
           this.file = response;
-          this.value = response.value
+          this.editorTempValue = response.value
         }
       } catch (error) {
         console.log(error)
@@ -78,11 +81,11 @@ export const useMainStore = defineStore("main", {
           return;
         }
         const filePath = response.filePath
-        const value = this.value || ''
+        const value = this.editorTempValue || ''
         await saveFile({filePath, value})
         response = await readFile(filePath);
         this.file = response;
-        this.value = response.value
+        this.editorTempValue = response.value
       } catch (error) {
         console.log(error)
       }

@@ -4,7 +4,10 @@
       <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
     </template>
   </Toast>
-  <CodeMirror6 :value="mainStore.value" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.value = v" />
+  <CodeMirror6 ref="editorRef" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.editorTempValue = v" />
+  <div class="footer">
+    <!-- <Button label="Language" text /> -->
+  </div>
   <Dialog
     v-model:visible="visible"
     position="top"
@@ -95,13 +98,19 @@ const items = ref([
 ]);
 
 
+const editorRef = ref(null)
+
+
 onMenuAction(async (data: any) => {
   switch (data.id) {
     case Types.Menu.newFile:
       await mainStore.newFile();
       break;
     case Types.Menu.openFile:
-      await mainStore.openFile();
+      const success = await mainStore.openFile();
+      if (success) {
+        editorRef.value?.updateValue(mainStore.file.value);
+      }
       break;
     case Types.Menu.saveFile:
       await mainStore.saveFile();
@@ -133,11 +142,16 @@ onMounted(async ()=> {
 </script>
 <style scoped>
 .cm6-editor {
-  height: 100vh;
+  height: calc(100vh - 1.5rem);
   width: 100%;
 }
 
 .listbox.p-listbox {
   border: none;
+}
+
+.footer{
+  height: 1.5rem;
+  background-color: deepskyblue;
 }
 </style>

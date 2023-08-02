@@ -15,23 +15,24 @@ import { autocompletion } from "@codemirror/autocomplete";
 
 const emit = defineEmits(['input'])
 
-
 /*********************************************************/
 /* PROPS */
 /*********************************************************/
 interface Props {
-  value?: string
+  initValue?: string,
   theme?: Extension
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  value: ''
+  initValue: ''
 })
 
 /*********************************************************/
 /* VARIABLES */
 /*********************************************************/
 let sync_val = ref('')
+
+
 
 let state: EditorState | null = null;
 let view: EditorView | null = null;
@@ -49,7 +50,7 @@ let extensions: Array<Extension> = [
     override: [],
   }),
   EditorView.updateListener.of(function(e) {
-      sync_val.value = e.state.doc.toString();
+    sync_val.value = e.state.doc.toString();
   }),
   themeConfig.of(props.theme? [props.theme] : [])
 ];
@@ -57,13 +58,13 @@ let extensions: Array<Extension> = [
 /*********************************************************/
 /* COMPUTED */
 /*********************************************************/
-const editorValue = computed(()=> props.value);
+const editorInitValue = computed(()=> props.initValue);
 const theme = computed(()=> props.theme);
 
 /*********************************************************/
 /* WATCHER */
 /*********************************************************/
-watch(editorValue, (value) => {
+watch(editorInitValue, (value) => {
   updateValue(value);
 });
 
@@ -113,18 +114,18 @@ function createEditorView(editorRef: HTMLElement, state: EditorState) {
 //Update value
 function updateValue(value: string) {
   view?.dispatch({
-    changes: { from: 0, to: view.state.doc.length, insert: value },
+    changes: { from: 0, to: view.state.doc.length, insert: value,  },
   });
 }
 
 //Update theme
 function updateTheme(theme: Extension) {
-  console.log('theme', theme)
-
   view?.dispatch({
       effects: themeConfig.reconfigure([theme])
   });
 }
+
+defineExpose({ updateValue });
 
 /*********************************************************/
 /* HOOKS */

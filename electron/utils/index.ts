@@ -1,4 +1,7 @@
 import _ from "lodash";
+import { BrowserWindow, session } from 'electron'
+import { homedir } from 'os'
+import { join } from 'path'
 
 export function treeToArray(array = [], { children = "submenu" } = {}): Array<any> {
   const iterateFn = (item: any) => {
@@ -20,4 +23,23 @@ export function arrayToTree(array = [], { id = null, parentId = "parentId", chil
       }
       return item;
     });
+}
+
+export async function loadVueJSExtensionDevTools(){
+  let vueDevToolsPath = ''
+  switch (process.platform) {
+    case 'linux':
+      vueDevToolsPath = join(
+        homedir(),
+        '/.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.0_0/'
+      )
+      break;
+    default:
+      throw(new Error(`Cannot load vueJS exetension dev tool because platform '${process.platform}' is not supported`))
+  }
+  await session.defaultSession.loadExtension(vueDevToolsPath)
+}
+
+export function openDevTools(win:BrowserWindow){
+  win.webContents.openDevTools()
 }
