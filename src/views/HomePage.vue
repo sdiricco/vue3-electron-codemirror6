@@ -6,22 +6,28 @@
   </Toast>
   <CodeMirror6 ref="editorRef" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.editorTempValue = v" />
   <div class="footer">
-    <!-- <Button label="Language" text /> -->
+    <Button
+      text
+      label="Language"
+      :pt="{
+        root: { class: 'p-0' },
+      }">
+      <span class="text-xs text-white">Language</span>  
+    </Button>
   </div>
   <Dialog
     v-model:visible="visible"
     position="top"
     :modal="true"
     :draggable="false"
-    :style="{ width: '50vw'}"
+    :style="{ width: '50vw' }"
     :pt="{
       header: {
         class: 'surface-200',
       },
     }">
     <template #header>
-      <div>
-      </div>
+      <div></div>
     </template>
     <div>
       <TabMenu v-model:activeIndex="active" :model="items" />
@@ -46,20 +52,20 @@ import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 
 import { oneDark, color } from "@codemirror/theme-one-dark";
-import { basicLight, basicLightHighlightStyle } from 'cm6-theme-basic-light'
-import { basicDark } from 'cm6-theme-basic-dark'
-import { solarizedDark } from 'cm6-theme-solarized-dark'
-import { solarizedLight } from 'cm6-theme-solarized-light'
-import { materialDark } from 'cm6-theme-material-dark'
-import { nord } from 'cm6-theme-nord'
-import { gruvboxLight } from 'cm6-theme-gruvbox-light'
-import { gruvboxDark } from 'cm6-theme-gruvbox-dark'
+import { basicLight, basicLightHighlightStyle } from "cm6-theme-basic-light";
+import { basicDark } from "cm6-theme-basic-dark";
+import { solarizedDark } from "cm6-theme-solarized-dark";
+import { solarizedLight } from "cm6-theme-solarized-light";
+import { materialDark } from "cm6-theme-material-dark";
+import { nord } from "cm6-theme-nord";
+import { gruvboxLight } from "cm6-theme-gruvbox-light";
+import { gruvboxDark } from "cm6-theme-gruvbox-dark";
 
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 
 const showSuccess = () => {
-    toast.add({ severity: 'info',  detail: 'Salvataggio in corso..', life: 1000, closable: false, summary: "Salva" });
+  toast.add({ severity: "info", detail: "Salvataggio in corso..", life: 1000, closable: false, summary: "Salva" });
 };
 
 const mainStore = useMainStore();
@@ -76,8 +82,8 @@ const themes = ref([
   { label: "solarizedLight", icon: "pi pi-fw pi-trash", value: solarizedLight },
   { label: "materialDark", icon: "pi pi-fw pi-trash", value: materialDark },
   { label: "nord", icon: "pi pi-fw pi-trash", value: nord },
-  { label: "gruvboxLight ", icon: "pi pi-fw pi-trash", value: gruvboxLight  },
-  { label: "gruvboxDark ", icon: "pi pi-fw pi-trash", value: gruvboxDark  },
+  { label: "gruvboxLight ", icon: "pi pi-fw pi-trash", value: gruvboxLight },
+  { label: "gruvboxDark ", icon: "pi pi-fw pi-trash", value: gruvboxDark },
 ]);
 
 const selectedTheme = ref(themes.value[0]);
@@ -97,9 +103,7 @@ const items = ref([
   },
 ]);
 
-
-const editorRef = ref(null)
-
+const editorRef = ref(null);
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
@@ -121,7 +125,7 @@ onMenuAction(async (data: any) => {
       showSuccess();
       break;
     case Types.Menu.preferences:
-      console.log('basicLightHighlightStyle', basicLightHighlightStyle)
+      console.log("basicLightHighlightStyle", basicLightHighlightStyle);
       visible.value = true;
       break;
     default:
@@ -129,16 +133,16 @@ onMenuAction(async (data: any) => {
   }
 });
 
-const title = computed(()=> mainStore.file.name)
-const isFileChanged = computed(()=> mainStore.isFileChanged)
+const title = computed(() => mainStore.file.name);
+const isFileChanged = computed(() => mainStore.isFileChanged);
 
-watch(title, mainStore.updateWindowTitle )
+watch(title, mainStore.updateWindowTitle);
 
-watch(isFileChanged, mainStore.updateWindowTitle)
+watch(isFileChanged, mainStore.updateWindowTitle);
 
-onMounted(async ()=> {
-  await mainStore.updateWindowTitle()
-})
+onMounted(async () => {
+  await mainStore.updateWindowTitle();
+});
 </script>
 <style scoped>
 .cm6-editor {
@@ -150,7 +154,7 @@ onMounted(async ()=> {
   border: none;
 }
 
-.footer{
+.footer {
   height: 1.5rem;
   background-color: deepskyblue;
 }
