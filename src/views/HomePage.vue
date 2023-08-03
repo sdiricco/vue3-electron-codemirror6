@@ -1,20 +1,26 @@
 <template>
+  <!-- TOAST MESSAGE -->
   <Toast>
     <template #icon>
       <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
     </template>
   </Toast>
+  <!-- EDITOR -->
   <CodeMirror6 ref="editorRef" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.editorTempValue = v" />
+  <!-- FOOTER -->
   <div class="footer">
     <Button
       text
       label="Language"
       :pt="{
-        root: { class: 'p-0' },
-      }">
+        root: { class: 'p-0 h-full border-noround px-2' },
+      }"
+      @click="modalVisible = true"
+      >
       <span class="text-xs text-white">Language</span>  
     </Button>
   </div>
+  <!-- SETTINGS PANEL -->
   <Dialog
     v-model:visible="visible"
     position="top"
@@ -42,11 +48,13 @@
       </div>
     </div>
   </Dialog>
+  <LanguageMenu v-model:visible="modalVisible"  />
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from "vue";
 import CodeMirror6 from "@/components/CodeMirror6.vue";
+import LanguageMenu from "@/components/LanguageMenu.vue";
 import { showMessageBox, onMenuAction, openDialog } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
@@ -62,6 +70,8 @@ import { gruvboxLight } from "cm6-theme-gruvbox-light";
 import { gruvboxDark } from "cm6-theme-gruvbox-dark";
 
 import { useToast } from "primevue/usetoast";
+
+const modalVisible = ref(false);
 const toast = useToast();
 
 const showSuccess = () => {
