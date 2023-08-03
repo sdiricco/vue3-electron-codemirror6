@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { onMounted, onBeforeUnmount, watch, computed, ref } from "vue";
 import { basicSetup, EditorView} from "codemirror";
 import { EditorState, Extension, StateEffect } from "@codemirror/state";
-import { markdown } from "@codemirror/lang-markdown";
+
 import { Compartment } from '@codemirror/state'
 import { search } from "@codemirror/search";
 import { languages } from "@codemirror/language-data";
@@ -20,7 +20,8 @@ const emit = defineEmits(['input'])
 /*********************************************************/
 interface Props {
   initValue?: string,
-  theme?: Extension
+  theme?: Extension,
+  language?: Extension,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -40,19 +41,20 @@ let editorRef: HTMLElement | null = null;
 
 const editorId = `editor-${uuidv4()}`
 
-const themeConfig = new Compartment()
+const themeConfig = new Compartment();
+const languageConfig = new Compartment();
 
 let extensions: Array<Extension> = [
   basicSetup,
   search({ top: true }),
-  markdown({ codeLanguages: languages }),
-  autocompletion({
-    override: [],
-  }),
+  // autocompletion({
+  //   override: [],
+  // }),
   EditorView.updateListener.of(function(e) {
     sync_val.value = e.state.doc.toString();
   }),
-  themeConfig.of(props.theme? [props.theme] : [])
+  themeConfig.of(props.theme? [props.theme] : []),
+  languageConfig.of(props.language ? [props.language] : []),
 ];
 
 /*********************************************************/
@@ -60,16 +62,25 @@ let extensions: Array<Extension> = [
 /*********************************************************/
 const editorInitValue = computed(()=> props.initValue);
 const theme = computed(()=> props.theme);
+const language = computed(()=> props.language);
 
 /*********************************************************/
 /* WATCHER */
 /*********************************************************/
+
+//when change init editor value, update interna value
 watch(editorInitValue, (value) => {
   updateValue(value);
 });
 
+//when change theme update theme
 watch(theme, (value) => {
   value && updateTheme(value)
+})
+
+//when change language update language
+watch(language, (value) => {
+  value && updateLanguage(value)
 })
 
 watch(sync_val, (value)=> {
@@ -121,7 +132,14 @@ function updateValue(value: string) {
 //Update theme
 function updateTheme(theme: Extension) {
   view?.dispatch({
-      effects: themeConfig.reconfigure([theme])
+    effects: themeConfig.reconfigure([theme])
+  });
+}
+
+//Update theme
+function updateLanguage(language: Extension) {
+  view?.dispatch({
+    effects: languageConfig.reconfigure([language])
   });
 }
 

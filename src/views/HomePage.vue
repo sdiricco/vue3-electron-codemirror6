@@ -6,7 +6,12 @@
     </template>
   </Toast>
   <!-- EDITOR -->
-  <CodeMirror6 ref="editorRef" class="cm6-editor" :theme="selectedTheme.value" @input="(v:string) => mainStore.editorTempValue = v" />
+  <CodeMirror6
+    ref="editorRef"
+    class="cm6-editor"
+    :theme="selectedTheme.value"
+    :language="selectedLanguage.value"
+    @input="(v:string) => mainStore.editorTempValue = v" />
   <!-- FOOTER -->
   <div class="footer">
     <Button
@@ -15,9 +20,8 @@
       :pt="{
         root: { class: 'p-0 h-full border-noround px-2' },
       }"
-      @click="modalVisible = true"
-      >
-      <span class="text-xs text-white">Language</span>  
+      @click="modalVisible = true">
+      <span class="text-xs text-white">{{ selectedLanguage.label }}</span>
     </Button>
   </div>
   <!-- SETTINGS PANEL -->
@@ -48,7 +52,7 @@
       </div>
     </div>
   </Dialog>
-  <LanguageMenu v-model:visible="modalVisible"  />
+  <LanguageMenu v-model:visible="modalVisible" :languages="languages" @update:language="(language) => (selectedLanguage = language)" />
 </template>
 
 <script setup lang="ts">
@@ -59,6 +63,8 @@ import { showMessageBox, onMenuAction, openDialog } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 
+import { markdown } from "@codemirror/lang-markdown";
+import { javascriptLanguage, jsxLanguage, typescriptLanguage, tsxLanguage } from "@codemirror/lang-javascript";
 import { oneDark, color } from "@codemirror/theme-one-dark";
 import { basicLight, basicLightHighlightStyle } from "cm6-theme-basic-light";
 import { basicDark } from "cm6-theme-basic-dark";
@@ -97,6 +103,15 @@ const themes = ref([
 ]);
 
 const selectedTheme = ref(themes.value[0]);
+
+const languages = ref([
+  { label: "JavaScript", iconPath: "src/assets/icons/file_type_js.svg", value: javascriptLanguage },
+  { label: "TypeScript", iconPath: "src/assets/icons/file_type_typescript.svg", value: typescriptLanguage },
+  { label: "React JSX", iconPath: "src/assets/icons/file_type_reactjs.svg", value: jsxLanguage },
+  { label: "React TSX", iconPath: "src/assets/icons/file_type_reactts.svg", value: tsxLanguage },
+]);
+
+const selectedLanguage = ref(languages.value[0]);
 
 const items = ref([
   {
