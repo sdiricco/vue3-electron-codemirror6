@@ -80,16 +80,16 @@ const themes = ref([
 const selectedTheme = ref(themes.value[0]);
 
 const languageList = ref([
-  { label: "JavaScript", iconPath: "src/assets/icons/file_type_js.svg", value: javascriptLanguage },
-  { label: "TypeScript", iconPath: "src/assets/icons/file_type_typescript.svg", value: typescriptLanguage },
-  { label: "React JSX", iconPath: "src/assets/icons/file_type_reactjs.svg", value: jsxLanguage },
-  { label: "React TSX", iconPath: "src/assets/icons/file_type_reactts.svg", value: tsxLanguage },
-  { label: "Markdown", iconPath: "src/assets/icons/file_type_markdown.svg", value: markdown({ codeLanguages: languages }) },
+  { label: "JavaScript", iconPath: "assets/icons/file_type_js.svg", value: javascriptLanguage },
+  { label: "TypeScript", iconPath: "assets/icons/file_type_typescript.svg", value: typescriptLanguage },
+  { label: "React JSX", iconPath: "assets/icons/file_type_reactjs.svg", value: jsxLanguage },
+  { label: "React TSX", iconPath: "assets/icons/file_type_reactts.svg", value: tsxLanguage },
+  { label: "Markdown", iconPath: "assets/icons/file_type_markdown.svg", value: markdown({ codeLanguages: languages }) },
 ]);
 
 const selectedLanguage = ref(languageList.value[0]);
 
-const editorRef = ref(null);
+const editorRef = ref<any>(null);
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
@@ -99,7 +99,7 @@ onMenuAction(async (data: any) => {
     case Types.Menu.openFile:
       const success = await mainStore.openFile();
       if (success) {
-        editorRef.value?.updateValue(mainStore.file.value);
+        editorRef.value.updateValue(mainStore.file.value);
       }
       break;
     case Types.Menu.saveFile:
