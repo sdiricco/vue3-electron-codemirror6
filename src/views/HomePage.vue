@@ -109,6 +109,8 @@ const languages = ref([
   { label: "TypeScript", iconPath: "src/assets/icons/file_type_typescript.svg", value: typescriptLanguage },
   { label: "React JSX", iconPath: "src/assets/icons/file_type_reactjs.svg", value: jsxLanguage },
   { label: "React TSX", iconPath: "src/assets/icons/file_type_reactts.svg", value: tsxLanguage },
+  { label: "Markdown", iconPath: "src/assets/icons/file_type_markdown.svg", value: markdown },
+  { label: "Text", iconPath: "src/assets/icons/file_type_text.svg", value: null },
 ]);
 
 const selectedLanguage = ref(languages.value[0]);

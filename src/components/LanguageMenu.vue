@@ -19,8 +19,8 @@
     </div>
     <div class="border-y-1 surface-border px-2 py-2">
       <ul class="list-none m-0 p-0">
-        <li v-for="(language, idx) in languages" :key="idx" class="select-none p-1 font-medium text-base cursor-pointer border-round-lg hover:surface-hover" @click="onSelectLanguage(language)">
-          <Image :src="language.iconPath" alt="Image" width="20" class="vertical-align-middle" /> {{ language.label }}
+        <li v-for="(language, idx) in languages" :key="idx" class="select-none p-1 font-medium text-base cursor-pointer border-round-lg hover:surface-hover flex align-items-center" @click="onSelectLanguage(language)">
+          <img :src="language.iconPath" alt="Image" :style="{width:'16px'}" class="vertical-align-middle mr-2" /> {{ language.label }}
         </li>
       </ul>
     </div>
@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 
 const props = defineProps(["visible", "languages"]);
 const emit = defineEmits(["update:visible", "update:language"]);
