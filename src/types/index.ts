@@ -28,7 +28,7 @@ export enum Menu {
   saveFile = "file/save",
   saveAsFile = "file/save-as",
   newFile = "file/new",
-  preferences = "file/preferences"
+  themes = "file/themes"
 }
 
 export enum Channel {

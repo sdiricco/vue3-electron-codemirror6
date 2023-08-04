@@ -67,9 +67,9 @@ export function create(win, onClickItem) {
           type: "separator",
         },
         {
-          id: "file/preferences",
+          id: "file/themes",
           parentId: "file",
-          label: "Preferences",
+          label: "Themes",
           click: (menuItem) => onClickItem({...optionsFiltered(menuItem)}),
         },
         {

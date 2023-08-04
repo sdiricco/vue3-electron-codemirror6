@@ -4,16 +4,12 @@
 
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
-import { onMounted, onBeforeUnmount, watch, computed, ref } from "vue";
+import { onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { basicSetup, EditorView} from "codemirror";
-import { EditorState, Extension, StateEffect } from "@codemirror/state";
-
+import { EditorState, Extension } from "@codemirror/state";
 import { Compartment } from '@codemirror/state'
 import { search } from "@codemirror/search";
-import { languages } from "@codemirror/language-data";
-import { autocompletion } from "@codemirror/autocomplete";
 
-const emit = defineEmits(['input'])
 
 /*********************************************************/
 /* PROPS */
@@ -29,11 +25,13 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 /*********************************************************/
+/* EMIT */
+/*********************************************************/
+const emit = defineEmits(['input'])
+
+/*********************************************************/
 /* VARIABLES */
 /*********************************************************/
-let sync_val = ref('')
-
-
 
 let state: EditorState | null = null;
 let view: EditorView | null = null;
@@ -47,11 +45,8 @@ const languageConfig = new Compartment();
 let extensions: Array<Extension> = [
   basicSetup,
   search({ top: true }),
-  // autocompletion({
-  //   override: [],
-  // }),
   EditorView.updateListener.of(function(e) {
-    sync_val.value = e.state.doc.toString();
+    emit('input', e.state.doc.toString())
   }),
   themeConfig.of(props.theme? [props.theme] : []),
   languageConfig.of(props.language ? [props.language] : []),
@@ -68,7 +63,7 @@ const language = computed(()=> props.language);
 /* WATCHER */
 /*********************************************************/
 
-//when change init editor value, update interna value
+//when change init editor value, update internal value
 watch(editorInitValue, (value) => {
   updateValue(value);
 });
@@ -83,14 +78,9 @@ watch(language, (value) => {
   value && updateLanguage(value)
 })
 
-watch(sync_val, (value)=> {
-  emit('input', value)
-})
-
 /*********************************************************/
 /* EDITOR FUNCTIONS */
 /*********************************************************/
-
 //create editor
 function createEditor(id: string, extensions:Array<Extension>) {
   editorRef = document.getElementById(id);
@@ -139,10 +129,13 @@ function updateTheme(theme: Extension) {
 //Update theme
 function updateLanguage(language: Extension) {
   view?.dispatch({
-    effects: languageConfig.reconfigure([language])
+    effects: languageConfig.reconfigure(language)
   });
 }
 
+/*********************************************************/
+/* EXPOSE */
+/*********************************************************/
 defineExpose({ updateValue });
 
 /*********************************************************/

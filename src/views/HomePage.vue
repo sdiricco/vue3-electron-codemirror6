@@ -20,51 +20,28 @@
       :pt="{
         root: { class: 'p-0 h-full border-noround px-2' },
       }"
-      @click="modalVisible = true">
+      @click="languageMenuModalVisible = true">
       <span class="text-xs text-white">{{ selectedLanguage.label }}</span>
     </Button>
   </div>
   <!-- SETTINGS PANEL -->
-  <Dialog
-    v-model:visible="visible"
-    position="top"
-    :modal="true"
-    :draggable="false"
-    :style="{ width: '50vw' }"
-    :pt="{
-      header: {
-        class: 'surface-200',
-      },
-    }">
-    <template #header>
-      <div></div>
-    </template>
-    <div>
-      <TabMenu v-model:activeIndex="active" :model="items" />
-      <div v-if="active === 0" class="p-2">
-        <p>Not yet available</p>
-      </div>
-      <div v-if="active === 1" class="p-2">
-        <Listbox class="listbox w-full" v-model="selectedTheme" :options="themes" optionLabel="label" />
-      </div>
-      <div v-if="active === 2">
-        <p>Info</p>
-      </div>
-    </div>
-  </Dialog>
-  <LanguageMenu v-model:visible="modalVisible" :languages="languages" @update:language="(language) => (selectedLanguage = language)" />
+  <ThemeMenu v-model:visible="themeMenuModalVisible" v-model:theme="selectedTheme" :themes="themes" />
+  <LanguageMenu v-model:visible="languageMenuModalVisible" v-model:language="selectedLanguage" :languages="languageList" />
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from "vue";
 import CodeMirror6 from "@/components/CodeMirror6.vue";
 import LanguageMenu from "@/components/LanguageMenu.vue";
-import { showMessageBox, onMenuAction, openDialog } from "@/electronRenderer";
+import ThemeMenu from "@/components/ThemeMenu.vue";
+import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 
+
 import { markdown } from "@codemirror/lang-markdown";
-import { javascriptLanguage, jsxLanguage, typescriptLanguage, tsxLanguage } from "@codemirror/lang-javascript";
+import { languages } from "@codemirror/language-data";
+import { javascriptLanguage, jsxLanguage, typescriptLanguage, tsxLanguage, scopeCompletionSource } from "@codemirror/lang-javascript";
 import { oneDark, color } from "@codemirror/theme-one-dark";
 import { basicLight, basicLightHighlightStyle } from "cm6-theme-basic-light";
 import { basicDark } from "cm6-theme-basic-dark";
@@ -77,7 +54,7 @@ import { gruvboxDark } from "cm6-theme-gruvbox-dark";
 
 import { useToast } from "primevue/usetoast";
 
-const modalVisible = ref(false);
+const languageMenuModalVisible = ref(false);
 const toast = useToast();
 
 const showSuccess = () => {
@@ -86,9 +63,7 @@ const showSuccess = () => {
 
 const mainStore = useMainStore();
 
-const visible = ref(false);
-
-const active = ref(0);
+const themeMenuModalVisible = ref(false);
 
 const themes = ref([
   { label: "oneDark", icon: "pi pi-fw pi-plus", value: oneDark },
@@ -104,31 +79,15 @@ const themes = ref([
 
 const selectedTheme = ref(themes.value[0]);
 
-const languages = ref([
+const languageList = ref([
   { label: "JavaScript", iconPath: "src/assets/icons/file_type_js.svg", value: javascriptLanguage },
   { label: "TypeScript", iconPath: "src/assets/icons/file_type_typescript.svg", value: typescriptLanguage },
   { label: "React JSX", iconPath: "src/assets/icons/file_type_reactjs.svg", value: jsxLanguage },
   { label: "React TSX", iconPath: "src/assets/icons/file_type_reactts.svg", value: tsxLanguage },
-  { label: "Markdown", iconPath: "src/assets/icons/file_type_markdown.svg", value: markdown },
-  { label: "Text", iconPath: "src/assets/icons/file_type_text.svg", value: null },
+  { label: "Markdown", iconPath: "src/assets/icons/file_type_markdown.svg", value: markdown({ codeLanguages: languages }) },
 ]);
 
-const selectedLanguage = ref(languages.value[0]);
-
-const items = ref([
-  {
-    label: "Editor",
-    icon: "pi pi-fw pi-code",
-  },
-  {
-    label: "Temi",
-    icon: "pi pi-fw pi-palette",
-  },
-  {
-    label: "Info",
-    icon: "pi pi-fw pi-info-circle",
-  },
-]);
+const selectedLanguage = ref(languageList.value[0]);
 
 const editorRef = ref(null);
 
@@ -151,9 +110,9 @@ onMenuAction(async (data: any) => {
       await mainStore.saveAsFile();
       showSuccess();
       break;
-    case Types.Menu.preferences:
+    case Types.Menu.themes:
       console.log("basicLightHighlightStyle", basicLightHighlightStyle);
-      visible.value = true;
+      themeMenuModalVisible.value = true;
       break;
     default:
       break;

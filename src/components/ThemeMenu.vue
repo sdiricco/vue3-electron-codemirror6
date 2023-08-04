@@ -12,9 +12,9 @@
     appendTo="body">
     <Listbox
       filter
-      @update:modelValue="onSelectLanguage"
-      :modelValue="props.language"
-      :options="languagesFiltered"
+      @update:modelValue="onSelectTheme"
+      :modelValue="props.theme"
+      :options="themesFiltered"
       optionLabel="label"
       :pt="{
         item: {
@@ -34,35 +34,24 @@
             left: '0.75rem',
           },
         },
-      }">
-      <template #option="slotProps">
-        <div class="flex align-items-center">
-          <img
-            :alt="slotProps.option.label"
-            :src="slotProps.option.iconPath"
-            class="mr-2"
-            style="width: 18px" />
-          <div>{{ slotProps.option.label }}</div>
-        </div>
-      </template>
-    </Listbox>
+      }" />
   </Dialog>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 
-const props = defineProps(["visible", "languages", "language"]);
-const emit = defineEmits(["update:visible", "update:language"]);
+const props = defineProps(["visible", "themes", "theme"]);
+const emit = defineEmits(["update:visible", "update:theme"]);
 
-function onSelectLanguage(language) {
-  emit("update:language", language);
+function onSelectTheme(theme) {
+  emit("update:theme", theme);
   emit("update:visible", false);
 }
 
 const searchText = ref("");
 
-const languagesFiltered = computed(() => {
-  return props.languages.filter((language) => language.label.includes(searchText.value));
+const themesFiltered = computed(() => {
+  return props.themes.filter((theme) => theme.label.includes(searchText.value));
 });
 </script>
