@@ -9,6 +9,8 @@ import { basicSetup, EditorView} from "codemirror";
 import { EditorState, Extension } from "@codemirror/state";
 import { Compartment } from '@codemirror/state'
 import { search } from "@codemirror/search";
+import { javascriptLanguage, jsxLanguage, typescriptLanguage, tsxLanguage, scopeCompletionSource, javascript } from "@codemirror/lang-javascript";
+
 
 
 /*********************************************************/
@@ -49,7 +51,7 @@ let extensions: Array<Extension> = [
     emit('input', e.state.doc.toString())
   }),
   themeConfig.of(props.theme? [props.theme] : []),
-  languageConfig.of(props.language ? [props.language] : []),
+  languageConfig.of(props.language? [props.language] : []),
 ];
 
 /*********************************************************/

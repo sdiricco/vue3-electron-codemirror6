@@ -37,12 +37,24 @@ import ThemeMenu from "@/components/ThemeMenu.vue";
 import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
+import { useToast } from "primevue/usetoast";
 
 
+/*********************************************************************************/
+/* LANGUAGES IMPORTS */
+/*********************************************************************************/
+import {StreamLanguage} from "@codemirror/language"
 import { markdown } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import { javascriptLanguage, jsxLanguage, typescriptLanguage, tsxLanguage, scopeCompletionSource } from "@codemirror/lang-javascript";
-import { oneDark, color } from "@codemirror/theme-one-dark";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { html } from "@codemirror/lang-html";
+// import { json } from "@codemirror/lang-json"
+import {json} from "@codemirror/legacy-modes/mode/javascript"
+/*********************************************************************************/
+/* THEMES IMPORTS */
+/*********************************************************************************/
+import { oneDark } from "@codemirror/theme-one-dark";
 import { basicLight, basicLightHighlightStyle } from "cm6-theme-basic-light";
 import { basicDark } from "cm6-theme-basic-dark";
 import { solarizedDark } from "cm6-theme-solarized-dark";
@@ -52,7 +64,6 @@ import { nord } from "cm6-theme-nord";
 import { gruvboxLight } from "cm6-theme-gruvbox-light";
 import { gruvboxDark } from "cm6-theme-gruvbox-dark";
 
-import { useToast } from "primevue/usetoast";
 
 const languageMenuModalVisible = ref(false);
 const toast = useToast();
@@ -80,10 +91,13 @@ const themes = ref([
 const selectedTheme = ref(themes.value[0]);
 
 const languageList = ref([
-  { label: "JavaScript", iconPath: "assets/icons/file_type_js.svg", value: javascriptLanguage },
-  { label: "TypeScript", iconPath: "assets/icons/file_type_typescript.svg", value: typescriptLanguage },
-  { label: "React JSX", iconPath: "assets/icons/file_type_reactjs.svg", value: jsxLanguage },
-  { label: "React TSX", iconPath: "assets/icons/file_type_reactts.svg", value: tsxLanguage },
+  { label: "JavaScript", iconPath: "assets/icons/file_type_js.svg", value: javascript({jsx: false, typescript:false}) },
+  { label: "Python", iconPath: "assets/icons/file_type_python.svg", value: python() },
+  { label: "Html", iconPath: "assets/icons/file_type_html.svg", value: html({autoCloseTags:true, selfClosingTags: true, matchClosingTags: true}) },
+  { label: "Json", iconPath: "assets/icons/file_type_json.svg", value:  StreamLanguage.define(json)},
+  { label: "TypeScript", iconPath: "assets/icons/file_type_typescript.svg", value: javascript({jsx: false, typescript:true}) },
+  { label: "React JSX", iconPath: "assets/icons/file_type_reactjs.svg", value: javascript({jsx: true, typescript:false}) },
+  { label: "React TSX", iconPath: "assets/icons/file_type_reactts.svg", value: javascript({jsx: true, typescript:true})  },
   { label: "Markdown", iconPath: "assets/icons/file_type_markdown.svg", value: markdown({ codeLanguages: languages }) },
 ]);
 
@@ -142,6 +156,6 @@ onMounted(async () => {
 
 .footer {
   height: 1.5rem;
-  background-color: deepskyblue;
+  background-color: var(--surface-card) ;
 }
 </style>
