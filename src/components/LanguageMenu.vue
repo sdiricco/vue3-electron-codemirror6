@@ -10,42 +10,39 @@
     :style="{ width: '50vw' }"
     contentClass="border-round-top p-0"
     appendTo="body">
-    <Listbox
-      filter
-      @update:modelValue="onSelectLanguage"
-      :modelValue="props.language"
-      :options="languagesFiltered"
-      optionLabel="label"
-      :pt="{
-        item: {
-          class: 'p-2',
-        },
-        header: {
-          class: 'p-2',
-        },
-        filterInput: {
-          style: {
-            padding: '0.5rem',
-            'padding-left': '2.25rem',
+      <Listbox
+        filter
+        @update:modelValue="onSelectLanguage"
+        :modelValue="props.language"
+        :options="languagesFiltered"
+        optionLabel="label"
+        listStyle="max-height:400px"
+        :pt="{
+          item: {
+            class: 'p-2',
           },
-        },
-        filterIcon: {
-          style: {
-            left: '0.75rem',
+          header: {
+            class: 'p-2',
           },
-        },
-      }">
-      <template #option="slotProps">
-        <div class="flex align-items-center">
-          <img
-            :alt="slotProps.option.label"
-            :src="slotProps.option.iconPath"
-            class="mr-2"
-            style="width: 18px" />
-          <div>{{ slotProps.option.label }}</div>
-        </div>
-      </template>
-    </Listbox>
+          filterInput: {
+            style: {
+              padding: '0.5rem',
+              'padding-left': '2.25rem',
+            },
+          },
+          filterIcon: {
+            style: {
+              left: '0.75rem',
+            },
+          },
+        }">
+        <template #option="slotProps">
+          <div class="flex align-items-center">
+            <img :alt="slotProps.option.label" :src="slotProps.option.iconPath" class="mr-2" style="width: 18px" />
+            <div>{{ slotProps.option.label }}</div>
+          </div>
+        </template>
+      </Listbox>
   </Dialog>
 </template>
 
