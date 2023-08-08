@@ -1,0 +1,18 @@
+<template>
+  <div class="footer">
+    <FooterButton @click="emit('click-language')"> {{ props.language }} </FooterButton>
+  </div>
+</template>
+
+<script setup>
+import FooterButton from "./FooterButton.vue";
+const emit = defineEmits(['click-language'])
+const props = defineProps(['language'])
+</script>
+
+<style scoped>
+.footer {
+  height: 1.5rem;
+  background-color: var(--surface-card);
+}
+</style>

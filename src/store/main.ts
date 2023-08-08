@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { openDialog, saveDialog, setTitle } from "@/electronRenderer";
 import {readFile, saveFile} from "@/services/nodeApi"
-import {Menu} from "../types"
 import {ref} from "vue"
 
 export const useMainStore = defineStore("main", {
@@ -66,6 +65,9 @@ export const useMainStore = defineStore("main", {
           const response = await readFile(filePath);
           this.file = response;
           this.editorTempValue = response.value
+        }
+        else {
+          this.saveAsFile();
         }
       } catch (error) {
         console.log(error)
