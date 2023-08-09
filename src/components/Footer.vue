@@ -12,7 +12,7 @@ const props = defineProps(['language'])
 
 <style scoped>
 .footer {
-  height: 1.5rem;
+  height: 2rem;
   background-color: var(--surface-card);
 }
 </style>

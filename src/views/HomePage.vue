@@ -1,7 +1,8 @@
 <template>
-  <Splitter style="height: 100%; border: none">
+  <Splitter style="border: none" class="panel">
     <SplitterPanel :size="25">
       <Tree
+        @node-expand="onNodeExpand"
         :value="nodesData"
         style="border: none"
         scrollHeight="flex"
@@ -31,6 +32,7 @@
       <CodeMirror6
         ref="editorRef"
         class="cm6-editor"
+        style="height: 100%;"
         :theme="settingsStore.selectedTheme.value"
         :language="settingsStore.selectedLanguage.value"
         @input="(v:string) => mainStore.editorTempValue = v" />
@@ -57,6 +59,8 @@ import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
 import { readDir } from "@/services/nodeApi";
+import {cloneDeep} from "lodash"
+import {updateItem, arrayToTree, treeToArray,updateTreeNodeById} from "@/utils/tree"
 
 const languageMenuModalVisible = ref(false);
 
@@ -99,15 +103,42 @@ const isFileChanged = computed(() => mainStore.isFileChanged);
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
 
+async function onNodeExpand(node:any){
+  if(node.children){
+    return;
+  }
+  const items = await readDir({ dirPath: node.item.path });
+  let _node = cloneDeep(node)
+  _node.children = items.map((item:any, i:number) => {
+    return {
+      key: `${node.key}-${String(i)}`,
+      id: `${node.id}-${String(i)}`,
+      parentId: node.key,
+      label: item.name,
+      data: item.name,
+      icon: "pi pi-fw pi-inbox",
+      item: item,
+      leaf: item.type === 'directory' ? false : true
+    }
+  })
+  const newValues = updateTreeNodeById(nodesData.value, _node.id, _node)
+  console.log(newValues)
+  nodesData.value = cloneDeep(newValues);
+
+}
+
 onMounted(async () => {
   await mainStore.updateWindowTitle();
   const items = await readDir({ dirPath: "./" });
   nodesData.value = items.map((item:any, i:number) => {
     return {
       key: String(i),
+      id: String(i),
+      parentId: null,
       label: item.name,
       data: item.name,
       icon: "pi pi-fw pi-inbox",
+      item: item,
       leaf: item.type === 'directory' ? false : true
     };
   });
@@ -115,8 +146,8 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-.cm6-editor {
-  height: calc(100vh - 1.5rem);
+.panel {
+  height: calc(100vh - 2rem);
   width: 100%;
 }
 

@@ -47,7 +47,7 @@ export async function readDir({dirPath = ''}){
     let itemFull = {
       type: itemStats.isDirectory() ? 'directory' : 'file',
       path: fullPath,
-      name: itemPath,
+      name: path.basename(fullPath),
     }
     if (itemFull.type === 'file') {
       itemFull = {...itemFull, ... {
