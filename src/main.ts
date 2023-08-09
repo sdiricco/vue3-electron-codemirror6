@@ -57,6 +57,8 @@ import ScrollPanel from 'primevue/scrollpanel';
 import Sidebar from "primevue/sidebar";
 import Slider from "primevue/slider";
 import SelectButton from "primevue/selectbutton";
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
 import TabMenu from "primevue/tabmenu";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
@@ -65,6 +67,7 @@ import Textarea from "primevue/textarea";
 import ToggleButton from "primevue/togglebutton";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
+import Tree from 'primevue/tree';
 import Tooltip from "primevue/tooltip";
 import Listbox from 'primevue/listbox';
 /*****************************************************************************/
@@ -135,6 +138,8 @@ app.component("ScrollPanel", ScrollPanel);
 app.component("Sidebar", Sidebar);
 app.component("SelectButton", SelectButton);
 app.component("Slider", Slider);
+app.component("Splitter", Splitter);
+app.component("SplitterPanel", SplitterPanel);
 app.component("TabMenu", TabMenu);
 app.component("TabPanel", TabPanel);
 app.component("TabView", TabView);
@@ -142,6 +147,7 @@ app.component("Tag", Tag);
 app.component("Textarea", Textarea);
 app.component("ToggleButton", ToggleButton);
 app.component("Toast", Toast);
+app.component('Tree', Tree);
 app.component("Listbox", Listbox)
 
 /*****************************************************************************/

@@ -1,11 +1,41 @@
 <template>
-  <!-- CODEMIRROR EDITOR -->
-  <CodeMirror6
-    ref="editorRef"
-    class="cm6-editor"
-    :theme="settingsStore.selectedTheme.value"
-    :language="settingsStore.selectedLanguage.value"
-    @input="(v:string) => mainStore.editorTempValue = v" />
+  <Splitter style="height: 100%; border: none">
+    <SplitterPanel :size="25">
+      <Tree
+        :value="nodesData"
+        style="border: none"
+        scrollHeight="flex"
+        :pt="{
+          root: {
+            class: 'p-0',
+          },
+          node: {
+            class: 'p-0',
+          },
+          content: {
+            class: 'p-0',
+            style: {
+              'font-size': '0.9rem'
+            }
+          },
+          toggler: {
+            style: {
+              'height': '2rem',
+              'width': '2rem'
+            }
+          }
+        }"></Tree>
+    </SplitterPanel>
+    <SplitterPanel :size="75">
+      <!-- CODEMIRROR EDITOR -->
+      <CodeMirror6
+        ref="editorRef"
+        class="cm6-editor"
+        :theme="settingsStore.selectedTheme.value"
+        :language="settingsStore.selectedLanguage.value"
+        @input="(v:string) => mainStore.editorTempValue = v" />
+    </SplitterPanel>
+  </Splitter>
 
   <!-- THEME MENU -->
   <ThemeMenu v-model:visible="themeMenuModalVisible" v-model:theme="settingsStore.selectedTheme" :themes="settingsStore.themes" />
@@ -13,7 +43,7 @@
   <LanguageMenu v-model:visible="languageMenuModalVisible" v-model:language="settingsStore.selectedLanguage" :languages="settingsStore.languages" />
 
   <!-- FOOTER -->
-  <Footer @click-language="languageMenuModalVisible = true" :language="settingsStore.selectedLanguage.label"/>
+  <Footer @click-language="languageMenuModalVisible = true" :language="settingsStore.selectedLanguage.label" />
 </template>
 
 <script setup lang="ts">
@@ -26,6 +56,7 @@ import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
+import { readDir } from "@/services/nodeApi";
 
 const languageMenuModalVisible = ref(false);
 
@@ -34,6 +65,8 @@ const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
 
 const editorRef = ref<any>(null);
+
+const nodesData = ref<any>([]);
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
@@ -68,6 +101,17 @@ watch(isFileChanged, mainStore.updateWindowTitle);
 
 onMounted(async () => {
   await mainStore.updateWindowTitle();
+  const items = await readDir({ dirPath: "./" });
+  nodesData.value = items.map((item:any, i:number) => {
+    return {
+      key: String(i),
+      label: item.name,
+      data: item.name,
+      icon: "pi pi-fw pi-inbox",
+      leaf: item.type === 'directory' ? false : true
+    };
+  });
+  console.log(items);
 });
 </script>
 <style scoped>
