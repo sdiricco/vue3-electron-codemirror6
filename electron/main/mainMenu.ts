@@ -36,10 +36,17 @@ export function create(win, onClickItem) {
           click: (menuItem) => onClickItem({...optionsFiltered(menuItem)}),
         },
         {
+          id: "file/open-folder",
+          parentId: "file",
+          label: "Open Folder",
+          accelerator: "Ctrl + O",
+          click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
+        },
+        {
           id: "file/open",
           parentId: "file",
-          label: "Open",
-          accelerator: "Ctrl + O",
+          label: "Open File",
+          accelerator: "Ctrl + K",
           click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
         },
         {

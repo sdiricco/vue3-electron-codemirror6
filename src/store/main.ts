@@ -2,9 +2,26 @@ import { defineStore } from "pinia";
 import { openDialog, saveDialog, setTitle } from "@/electronRenderer";
 import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
+import { readDir } from "@/services/nodeApi";
+import {updateTreeNodeById} from "@/utils/tree"
+
+export type RootState = {
+  file: {
+    ext: string;
+    name: string;
+    path: string;
+    stat: object;
+    value: string;
+  },
+  folderPath: string;
+  editorTempValue: string;
+  editorRef: any;
+  tree: Array<any>;
+  isTreeLoading: boolean;
+};
 
 export const useMainStore = defineStore("main", {
-  state: () => ({ 
+  state: ():RootState => ({ 
     file: {
       ext: '',
       name: '',
@@ -12,8 +29,11 @@ export const useMainStore = defineStore("main", {
       stat: {},
       value: ''
     },
+    folderPath: '',
     editorTempValue: "",
-    editorRef: ref(null)
+    editorRef: ref(null),
+    tree: [],
+    isTreeLoading: false
   }),
 
   getters: {
@@ -32,6 +52,75 @@ export const useMainStore = defineStore("main", {
         value: ''
       },
       this.editorTempValue = ''
+    },
+
+    async selectNode(node:any){
+      if(node.item.type === 'directory'){
+        return false
+      }
+      const filePath = node.item.path;
+      const response = await readFile(filePath);
+      this.file = response;
+      this.editorTempValue = response.value
+      return true;
+    },
+
+    async updateTreeNode(node:any){
+      if(node.children){
+        return false;
+      }
+      this.isTreeLoading = true
+      const items = await readDir({ dirPath: node.item.path });
+      let _node = node
+      _node.children = items.map((item:any, i:number) => {
+        return {
+          key: `${node.key}-${String(i)}`,
+          id: `${node.id}-${String(i)}`,
+          parentId: node.key,
+          label: item.name,
+          data: item.name,
+          icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
+          item: item,
+          leaf: item.type === 'directory' ? false : true
+        }
+      })
+      this.tree = updateTreeNodeById(this.tree, _node.id, _node)
+      this.isTreeLoading = false
+      return true
+    },
+
+    //open file
+    async openFolder(){
+      let response = null;
+      try {
+        response = await openDialog({properties: ['openDirectory']})
+        if (response.canceled) {
+          return false;
+        }
+        const folderPath:any = response.filePaths && response.filePaths.length && response.filePaths[0];
+        if (!folderPath) {
+          return false;
+        }
+        this.folderPath = folderPath
+        this.isTreeLoading = true
+        const items = await readDir({ dirPath: folderPath });
+        this.tree = items.map((item:any, i:number) => {
+          return {
+            key: String(i),
+            id: String(i),
+            parentId: null,
+            label: item.name,
+            data: item.name,
+            icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
+            item: item,
+            leaf: item.type === 'directory' ? false : true
+          }
+        })
+        this.isTreeLoading = false;
+        return true;
+      } catch (error) {
+        console.log(error)
+      }
     },
 
     //open file

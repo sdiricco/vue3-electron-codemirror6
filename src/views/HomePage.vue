@@ -2,10 +2,16 @@
   <Splitter style="border: none" class="panel">
     <SplitterPanel :size="25">
       <Tree
+        class="custom-tree"
         @node-expand="onNodeExpand"
-        :value="nodesData"
+        @node-select="onNodeSelect"
+        selectionMode="single"
+        :value="mainStore.tree"
         style="border: none"
         scrollHeight="flex"
+        :loading="mainStore.isTreeLoading"
+        v-model:selectionKeys="selectedKey"
+
         :pt="{
           root: {
             class: 'p-0',
@@ -21,13 +27,14 @@
           },
           toggler: {
             style: {
-              'height': '2rem',
-              'width': '2rem'
+              'height': '1.5rem',
+              'width': '1.5rem',
+              'margin-right': '0px'
             }
           }
         }"></Tree>
     </SplitterPanel>
-    <SplitterPanel :size="75">
+    <SplitterPanel :size="75" class="overflow-x-auto">
       <!-- CODEMIRROR EDITOR -->
       <CodeMirror6
         ref="editorRef"
@@ -49,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, watch, TriggerOpTypes } from "vue";
 import CodeMirror6 from "@/components/CodeMirror6.vue";
 import LanguageMenu from "@/components/LanguageMenu.vue";
 import ThemeMenu from "@/components/ThemeMenu.vue";
@@ -58,22 +65,19 @@ import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
-import { readDir } from "@/services/nodeApi";
-import {cloneDeep} from "lodash"
-import {updateItem, arrayToTree, treeToArray,updateTreeNodeById} from "@/utils/tree"
 
 const languageMenuModalVisible = ref(false);
-
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
-
 const editorRef = ref<any>(null);
-
-const nodesData = ref<any>([]);
+const selectedKey = ref<any>(null);
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
+    case Types.Menu.openFolder:
+      await mainStore.openFolder();
+      break;
     case Types.Menu.newFile:
       await mainStore.newFile();
       break;
@@ -104,45 +108,19 @@ watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
 
 async function onNodeExpand(node:any){
-  if(node.children){
-    return;
-  }
-  const items = await readDir({ dirPath: node.item.path });
-  let _node = cloneDeep(node)
-  _node.children = items.map((item:any, i:number) => {
-    return {
-      key: `${node.key}-${String(i)}`,
-      id: `${node.id}-${String(i)}`,
-      parentId: node.key,
-      label: item.name,
-      data: item.name,
-      icon: "pi pi-fw pi-inbox",
-      item: item,
-      leaf: item.type === 'directory' ? false : true
-    }
-  })
-  const newValues = updateTreeNodeById(nodesData.value, _node.id, _node)
-  console.log(newValues)
-  nodesData.value = cloneDeep(newValues);
+  await mainStore.updateTreeNode(node)
 
+}
+
+async function onNodeSelect(node:any){
+  const success = await mainStore.selectNode(node)
+  if (success) {
+    editorRef.value.updateValue(mainStore.file.value);
+  }
 }
 
 onMounted(async () => {
   await mainStore.updateWindowTitle();
-  const items = await readDir({ dirPath: "./" });
-  nodesData.value = items.map((item:any, i:number) => {
-    return {
-      key: String(i),
-      id: String(i),
-      parentId: null,
-      label: item.name,
-      data: item.name,
-      icon: "pi pi-fw pi-inbox",
-      item: item,
-      leaf: item.type === 'directory' ? false : true
-    };
-  });
-  console.log(items);
 });
 </script>
 <style scoped>
@@ -153,5 +131,10 @@ onMounted(async () => {
 
 .listbox.p-listbox {
   border: none;
+}
+
+.custom-tree :deep(.p-treenode){
+  padding: 0px;
+  cursor: pointer;
 }
 </style>

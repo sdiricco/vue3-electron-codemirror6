@@ -25,6 +25,7 @@ export interface ISaveDialogReturnValue {
 
 export enum Menu {
   openFile = "file/open",
+  openFolder = "file/open-folder",
   saveFile = "file/save",
   saveAsFile = "file/save-as",
   newFile = "file/new",

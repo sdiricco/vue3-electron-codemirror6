@@ -36,7 +36,7 @@ export async function saveFile({filePath = '', value = ''}){
   return fsProm.writeFile(filePath, value);
 }
 
-//readDirectory
+//read directory with extra 
 export async function readDir({dirPath = ''}){
   const items = await fsProm.readdir(dirPath)
   const fullItems = []
