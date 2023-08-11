@@ -13,12 +13,12 @@ import { nord } from "cm6-theme-nord";
 import { gruvboxLight } from "cm6-theme-gruvbox-light";
 import { gruvboxDark } from "cm6-theme-gruvbox-dark";
 
-import {languagesMap} from "@/constants/languages"
+import {list, toLabel, toIcon, toCodeMirror, Language} from "@/constants/languages"
 
 export const useSettingsStore = defineStore("settings", {
   state: () => ({
-    languages: languagesMap,
-    selectedLanguage: languagesMap.find(l => l.value === 'javascript'),
+    languages: list.map((language:Language) => ({value: language, label: toLabel(language), iconPath: toIcon(language)})),
+    selectedLanguageValue: Language.javascript,
 
     themes: [
       { label: "oneDark", icon: "pi pi-fw pi-plus", value: oneDark },
@@ -33,4 +33,12 @@ export const useSettingsStore = defineStore("settings", {
     ],
     selectedTheme: { label: "oneDark", icon: "pi pi-fw pi-plus", value: oneDark },
   }),
+  getters: {
+    getSelectedCodemirrorLang(state){
+      return toCodeMirror(state.selectedLanguageValue)
+    },
+    getSelectedLanguage(state){
+      return state.languages.find(language => language.value === state.selectedLanguageValue)
+    }
+  }
 });

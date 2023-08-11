@@ -4,7 +4,7 @@ import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
 import { readDir } from "@/services/nodeApi";
 import {updateTreeNodeById} from "@/utils/tree"
-import {languagesMap} from "@/constants/languages"
+import {languagesMap, toIcon} from "@/constants/languages"
 import {useSettingsStore} from "@/store/settings"
 
 export type RootState = {
@@ -67,7 +67,7 @@ export const useMainStore = defineStore("main", {
       const settingsStore = useSettingsStore();
       const selectedLanguage = settingsStore.languages.find(l => l.value === node.item.language)
       if (selectedLanguage) {
-        settingsStore.selectedLanguage = selectedLanguage
+        settingsStore.selectedLanguageValue = selectedLanguage.value
       }
       return true;
     },
@@ -80,18 +80,20 @@ export const useMainStore = defineStore("main", {
       const items = await readDir({ dirPath: node.item.path });
       let _node = node
       _node.children = items.map((item:any, i:number) => {
-        const languageMap = languagesMap.find(l => l.value === item.language)
-        const iconPath = languageMap && languageMap.iconPath
+        const type = item.type;
+        let iconPath = 'assets/icons/default_folder.svg' ;
+        if (type === 'file') {
+          iconPath = toIcon(item.language) || 'assets/icons/default_file.svg'
+        }
+        const leaf = type === 'directory' ? false : true
         return {
           key: `${node.key}-${String(i)}`,
           id: `${node.id}-${String(i)}`,
-          parentId: node.key,
           label: item.name,
           data: item.name,
-          // icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
           iconPath,
           item: item,
-          leaf: item.type === 'directory' ? false : true
+          leaf,
         }
       })
       this.tree = updateTreeNodeById(this.tree, _node.id, _node)
@@ -115,18 +117,20 @@ export const useMainStore = defineStore("main", {
         this.isTreeLoading = true
         const items = await readDir({ dirPath: folderPath });
         this.tree = items.map((item:any, i:number) => {
-          const languageMap = languagesMap.find(l => l.value === item.language)
-          const iconPath = languageMap && languageMap.iconPath
+          const type = item.type;
+          let iconPath = 'assets/icons/default_folder.svg' ;
+          if (type === 'file') {
+            iconPath = toIcon(item.language) || 'assets/icons/default_file.svg'
+          }
+          const leaf = type === 'directory' ? false : true
           return {
             key: String(i),
             id: String(i),
-            parentId: null,
             label: item.name,
             data: item.name,
-            // icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
             iconPath,
             item: item,
-            leaf: item.type === 'directory' ? false : true
+            leaf
           }
         })
         this.isTreeLoading = false;

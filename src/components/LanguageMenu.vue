@@ -53,7 +53,7 @@ const props = defineProps(["visible", "languages", "language"]);
 const emit = defineEmits(["update:visible", "update:language"]);
 
 function onSelectLanguage(language) {
-  emit("update:language", language);
+  emit("update:language", language.value);
   emit("update:visible", false);
 }
 

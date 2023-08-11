@@ -11,7 +11,6 @@
         scrollHeight="flex"
         :loading="mainStore.isTreeLoading"
         v-model:selectionKeys="selectedKey"
-
         :pt="{
           root: {
             class: 'p-0',
@@ -22,32 +21,33 @@
           content: {
             class: 'p-0',
             style: {
-              'font-size': '0.9rem'
-            }
+              'font-size': '0.9rem',
+            },
           },
           toggler: {
             style: {
-              'height': '1.5rem',
-              'width': '1.5rem',
-              'margin-right': '0px'
-            }
-          }
+              height: '1.5rem',
+              width: '1.5rem',
+              'margin-right': '0px',
+            },
+          },
         }">
-            <template #default="slotProps">
-              <div class="flex align-content-center">
-                <img v-if="slotProps.node.item.type === 'file'" :alt="slotProps.node.label" :src="slotProps.node.iconPath" style="width: 18px" class="mr-1" /> {{ slotProps.node.label }}
-              </div>
-          </template>
-        </Tree>
+        <template #default="slotProps">
+          <div class="flex align-content-center">
+            <img :alt="slotProps.node.label" :src="slotProps.node.iconPath" style="width: 18px" class="mr-1" />
+            {{ slotProps.node.label }}
+          </div>
+        </template>
+      </Tree>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
       <!-- CODEMIRROR EDITOR -->
       <CodeMirror6
         ref="editorRef"
         class="cm6-editor"
-        style="height: 100%;"
+        style="height: 100%"
         :theme="settingsStore.selectedTheme.value"
-        :language="settingsStore.selectedLanguage.codemirror"
+        :language="settingsStore.getSelectedCodemirrorLang"
         @input="(v:string) => mainStore.editorTempValue = v" />
     </SplitterPanel>
   </Splitter>
@@ -55,10 +55,14 @@
   <!-- THEME MENU -->
   <ThemeMenu v-model:visible="themeMenuModalVisible" v-model:theme="settingsStore.selectedTheme" :themes="settingsStore.themes" />
   <!-- LANGUAGE MENU -->
-  <LanguageMenu v-model:visible="languageMenuModalVisible" v-model:language="settingsStore.selectedLanguage" :languages="settingsStore.languages" />
+  <LanguageMenu
+    v-model:visible="languageMenuModalVisible"
+    :language="settingsStore.getSelectedLanguage"
+    @update:language="(languageValue) => (settingsStore.selectedLanguageValue = languageValue)"
+    :languages="settingsStore.languages" />
 
   <!-- FOOTER -->
-  <Footer @click-language="languageMenuModalVisible = true" :language="settingsStore.selectedLanguage.label" />
+  <Footer @click-language="languageMenuModalVisible = true" :language="settingsStore.getSelectedLanguage && settingsStore.getSelectedLanguage.label" />
 </template>
 
 <script setup lang="ts">
@@ -113,13 +117,12 @@ const isFileChanged = computed(() => mainStore.isFileChanged);
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
 
-async function onNodeExpand(node:any){
-  await mainStore.updateTreeNode(node)
-
+async function onNodeExpand(node: any) {
+  await mainStore.updateTreeNode(node);
 }
 
-async function onNodeSelect(node:any){
-  const success = await mainStore.selectNode(node)
+async function onNodeSelect(node: any) {
+  const success = await mainStore.selectNode(node);
   if (success) {
     editorRef.value.updateValue(mainStore.file.value);
   }
@@ -139,7 +142,7 @@ onMounted(async () => {
   border: none;
 }
 
-.custom-tree :deep(.p-treenode){
+.custom-tree :deep(.p-treenode) {
   padding: 0px;
   cursor: pointer;
 }
