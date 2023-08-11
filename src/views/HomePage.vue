@@ -32,7 +32,13 @@
               'margin-right': '0px'
             }
           }
-        }"></Tree>
+        }">
+            <template #default="slotProps">
+              <div class="flex align-content-center">
+                <img v-if="slotProps.node.item.type === 'file'" :alt="slotProps.node.label" :src="slotProps.node.iconPath" style="width: 18px" class="mr-1" /> {{ slotProps.node.label }}
+              </div>
+          </template>
+        </Tree>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
       <!-- CODEMIRROR EDITOR -->
@@ -41,7 +47,7 @@
         class="cm6-editor"
         style="height: 100%;"
         :theme="settingsStore.selectedTheme.value"
-        :language="settingsStore.selectedLanguage.value"
+        :language="settingsStore.selectedLanguage.codemirror"
         @input="(v:string) => mainStore.editorTempValue = v" />
     </SplitterPanel>
   </Splitter>

@@ -4,6 +4,8 @@ import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
 import { readDir } from "@/services/nodeApi";
 import {updateTreeNodeById} from "@/utils/tree"
+import {languagesMap} from "@/constants/languages"
+import {useSettingsStore} from "@/store/settings"
 
 export type RootState = {
   file: {
@@ -61,7 +63,12 @@ export const useMainStore = defineStore("main", {
       const filePath = node.item.path;
       const response = await readFile(filePath);
       this.file = response;
-      this.editorTempValue = response.value
+      this.editorTempValue = response.value;
+      const settingsStore = useSettingsStore();
+      const selectedLanguage = settingsStore.languages.find(l => l.value === node.item.language)
+      if (selectedLanguage) {
+        settingsStore.selectedLanguage = selectedLanguage
+      }
       return true;
     },
 
@@ -73,13 +80,16 @@ export const useMainStore = defineStore("main", {
       const items = await readDir({ dirPath: node.item.path });
       let _node = node
       _node.children = items.map((item:any, i:number) => {
+        const languageMap = languagesMap.find(l => l.value === item.language)
+        const iconPath = languageMap && languageMap.iconPath
         return {
           key: `${node.key}-${String(i)}`,
           id: `${node.id}-${String(i)}`,
           parentId: node.key,
           label: item.name,
           data: item.name,
-          icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
+          // icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
+          iconPath,
           item: item,
           leaf: item.type === 'directory' ? false : true
         }
@@ -105,13 +115,16 @@ export const useMainStore = defineStore("main", {
         this.isTreeLoading = true
         const items = await readDir({ dirPath: folderPath });
         this.tree = items.map((item:any, i:number) => {
+          const languageMap = languagesMap.find(l => l.value === item.language)
+          const iconPath = languageMap && languageMap.iconPath
           return {
             key: String(i),
             id: String(i),
             parentId: null,
             label: item.name,
             data: item.name,
-            icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
+            // icon: item.type === 'directory' ? 'pi pi-folder' : 'pi pi-file',
+            iconPath,
             item: item,
             leaf: item.type === 'directory' ? false : true
           }

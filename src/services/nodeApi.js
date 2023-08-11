@@ -2,6 +2,7 @@ import fsProm from "fs/promises";
 import fs from "fs";
 import path from "path"
 import {sortBy} from "lodash"
+import langMap from "lang-map"
 
 //check if path exsits
 export async function exsistPath(p = "") {
@@ -50,8 +51,12 @@ export async function readDir({dirPath = ''}){
       name: path.basename(fullPath),
     }
     if (itemFull.type === 'file') {
+      const ext = path.extname(fullPath);
+      const languages = langMap.languages(ext)
+      const language = languages && languages.length && languages[0]
       itemFull = {...itemFull, ... {
-        ext: path.extname(fullPath),
+        ext,
+        language: language,
         stat: itemStats
       }}
     }
