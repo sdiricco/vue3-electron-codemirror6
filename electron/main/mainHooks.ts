@@ -9,4 +9,5 @@ export function onWindowCreated(window: BrowserWindow) {
   })
   mainHandle.handleDialogs(window)
   mainHandle.handleWindow(window)
+  mainHandle.handleFS(window)
 }

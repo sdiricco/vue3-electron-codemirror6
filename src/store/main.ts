@@ -1,11 +1,13 @@
 import { defineStore } from "pinia";
-import { openDialog, saveDialog, setTitle } from "@/electronRenderer";
+import { createTree, openDialog, saveDialog, setTitle, updateDirectoryTree, watchDir } from "@/electronRenderer";
 import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
 import { readDir } from "@/services/nodeApi";
 import {updateTreeNodeById} from "@/utils/tree"
 import {languagesMap, toIcon} from "@/constants/languages"
 import {useSettingsStore} from "@/store/settings"
+import { ipcRenderer } from "electron";
+import { Channel } from "@/types";
 
 export type RootState = {
   file: {
@@ -72,31 +74,14 @@ export const useMainStore = defineStore("main", {
       return true;
     },
 
-    async updateTreeNode(node:any){
-      if(node.children){
+    async updateTreeNode(_node:any){
+      if(_node.children){
         return false;
       }
       this.isTreeLoading = true
-      const items = await readDir({ dirPath: node.item.path });
-      let _node = node
-      _node.children = items.map((item:any, i:number) => {
-        const type = item.type;
-        let iconPath = 'assets/icons/default_folder.svg' ;
-        if (type === 'file') {
-          iconPath = toIcon(item.language) || 'assets/icons/default_file.svg'
-        }
-        const leaf = type === 'directory' ? false : true
-        return {
-          key: `${node.key}-${String(i)}`,
-          id: `${node.id}-${String(i)}`,
-          label: item.name,
-          data: item.name,
-          iconPath,
-          item: item,
-          leaf,
-        }
-      })
-      this.tree = updateTreeNodeById(this.tree, _node.id, _node)
+      const tree = JSON.parse(JSON.stringify(this.tree))
+      const node = JSON.parse(JSON.stringify(_node))
+      this.tree = await updateDirectoryTree({tree, node})
       this.isTreeLoading = false
       return true
     },
@@ -115,23 +100,9 @@ export const useMainStore = defineStore("main", {
         }
         this.folderPath = folderPath
         this.isTreeLoading = true
-        const items = await readDir({ dirPath: folderPath });
-        this.tree = items.map((item:any, i:number) => {
-          const type = item.type;
-          let iconPath = 'assets/icons/default_folder.svg' ;
-          if (type === 'file') {
-            iconPath = toIcon(item.language) || 'assets/icons/default_file.svg'
-          }
-          const leaf = type === 'directory' ? false : true
-          return {
-            key: String(i),
-            id: String(i),
-            label: item.name,
-            data: item.name,
-            iconPath,
-            item: item,
-            leaf
-          }
+        this.tree = await createTree(folderPath);
+        ipcRenderer.on(Channel.OnNewTree, (evt, tree)=> {
+          this.tree = tree;
         })
         this.isTreeLoading = false;
         return true;

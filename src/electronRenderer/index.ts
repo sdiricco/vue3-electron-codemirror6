@@ -34,6 +34,30 @@ export async function setTitle(title: string){
   return response.data;
 }
 
+export async function watchDir(dir: string){
+  const response = await ipcRenderer.invoke(Channel.WatchDir, dir);  
+  if (response.error) {
+    throw new ElectronError(response.error);
+  }
+  return response.data;
+}
+
+export async function createTree(dir: string){
+  const response = await ipcRenderer.invoke(Channel.CreateTree, dir);  
+  if (response.error) {
+    throw new ElectronError(response.error);
+  }
+  return response.data;
+}
+
+export async function updateDirectoryTree(data:{tree: Array<any>, node:any}){
+  const response = await ipcRenderer.invoke(Channel.UpdateDirectoryTree, data);  
+  if (response.error) {
+    throw new ElectronError(response.error);
+  }
+  return response.data;
+}
+
 export async function invokeChildWin()  {
   return await ipcRenderer.invoke('open-win');
 }

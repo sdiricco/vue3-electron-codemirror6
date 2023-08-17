@@ -37,8 +37,14 @@ export enum Channel {
   ShowSaveDialog = "electron/show-save-dialog",
   ShowOpenDialog = "electron/show-open-dialog",
   SetWindowTitle = "electron/set-window-title",
-  Menu = "electron/menu"
+  Menu = "electron/menu",
+  WatchDir = "electron/watch-dir",
+  CreateTree = "electron/create-tree",
+  UpdateDirectoryTree = "electron/update-directory-tree",
+  OnNewTree = "electron/on-new-tree",
 }
+
+
 
 
 

@@ -24,5 +24,9 @@ export enum Channel {
   ShowOpenDialog = "electron/show-open-dialog",
   SetWindowTitle = "electron/set-window-title",
   Menu = "electron/menu",
-  LoadThemes = "electron/load-themes"
+  LoadThemes = "electron/load-themes",
+  WatchDir = "electron/watch-dir",
+  CreateTree = "electron/create-tree",
+  UpdateDirectoryTree = "electron/update-directory-tree",
+  OnNewTree = "electron/on-new-tree",
 }

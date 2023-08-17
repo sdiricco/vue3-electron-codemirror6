@@ -34,7 +34,7 @@
         }">
         <template #default="slotProps">
           <div class="flex align-content-center">
-            <img :alt="slotProps.node.label" :src="slotProps.node.iconPath" style="width: 18px" class="mr-1" />
+            <img :alt="slotProps.node.label" :src="getIcon(slotProps.node)" style="width: 18px" class="mr-1" />
             {{ slotProps.node.label }}
           </div>
         </template>
@@ -75,6 +75,7 @@ import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
+import { toIcon } from "@/constants/languages";
 
 const languageMenuModalVisible = ref(false);
 const mainStore = useMainStore();
@@ -126,6 +127,10 @@ async function onNodeSelect(node: any) {
   if (success) {
     editorRef.value.updateValue(mainStore.file.value);
   }
+}
+
+function getIcon(node: any) {
+  return node.item.type === 'directory' ? 'assets/icons/default_folder.svg' : toIcon(node.item.language) || 'assets/icons/default_file.svg'
 }
 
 onMounted(async () => {
