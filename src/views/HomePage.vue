@@ -1,44 +1,7 @@
 <template>
   <Splitter style="border: none" class="panel">
     <SplitterPanel :size="25">
-      <Tree
-        class="custom-tree"
-        @node-expand="onNodeExpand"
-        @node-select="onNodeSelect"
-        selectionMode="single"
-        :value="mainStore.tree"
-        style="border: none"
-        scrollHeight="flex"
-        :loading="mainStore.isTreeLoading"
-        v-model:selectionKeys="selectedKey"
-        :pt="{
-          root: {
-            class: 'p-0',
-          },
-          node: {
-            class: 'p-0',
-          },
-          content: {
-            class: 'p-0',
-            style: {
-              'font-size': '0.9rem',
-            },
-          },
-          toggler: {
-            style: {
-              height: '1.5rem',
-              width: '1.5rem',
-              'margin-right': '0px',
-            },
-          },
-        }">
-        <template #default="slotProps">
-          <div class="flex align-content-center">
-            <img :alt="slotProps.node.label" :src="getIcon(slotProps.node)" style="width: 18px" class="mr-1" />
-            {{ slotProps.node.label }}
-          </div>
-        </template>
-      </Tree>
+      <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
       <!-- CODEMIRROR EDITOR -->
@@ -66,10 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, TriggerOpTypes } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import CodeMirror6 from "@/components/CodeMirror6.vue";
 import LanguageMenu from "@/components/LanguageMenu.vue";
 import ThemeMenu from "@/components/ThemeMenu.vue";
+import SideBar from "@/components/SideBar.vue";
 import Footer from "@/components/Footer.vue";
 import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
@@ -114,24 +78,15 @@ onMenuAction(async (data: any) => {
 
 const title = computed(() => mainStore.file.name);
 const isFileChanged = computed(() => mainStore.isFileChanged);
+const file = computed(() => mainStore.file);
+const fileValue = computed(() => mainStore.file.value);
 
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
+watch(fileValue,  (value) => {
+  editorRef.value.updateValue(value)
+})
 
-async function onNodeExpand(node: any) {
-  await mainStore.updateTreeNode(node);
-}
-
-async function onNodeSelect(node: any) {
-  const success = await mainStore.selectNode(node);
-  if (success) {
-    editorRef.value.updateValue(mainStore.file.value);
-  }
-}
-
-function getIcon(node: any) {
-  return node.item.type === 'directory' ? 'assets/icons/default_folder.svg' : toIcon(node.item.language) || 'assets/icons/default_file.svg'
-}
 
 onMounted(async () => {
   await mainStore.updateWindowTitle();
@@ -143,12 +98,7 @@ onMounted(async () => {
   width: 100%;
 }
 
-.listbox.p-listbox {
-  border: none;
-}
 
-.custom-tree :deep(.p-treenode) {
-  padding: 0px;
-  cursor: pointer;
-}
+
+
 </style>

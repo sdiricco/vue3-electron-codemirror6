@@ -86,6 +86,16 @@ export const useMainStore = defineStore("main", {
       return true
     },
 
+    async refreshTree(){
+      if (!this.folderPath) {
+        return;
+      }
+      this.isTreeLoading = true
+      this.tree = await createTree(this.folderPath);
+      this.isTreeLoading = false
+      
+    },
+
     //open file
     async openFolder(){
       let response = null;
