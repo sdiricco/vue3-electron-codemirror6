@@ -1,0 +1,1 @@
+export const JSONClone = (obj: Object) => JSON.parse(JSON.stringify(obj))

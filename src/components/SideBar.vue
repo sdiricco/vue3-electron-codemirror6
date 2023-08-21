@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-content-end">
     <Button
-      @click="mainStore.refreshTree"
+      @click="onRefreshTree"
       icon="pi pi-refresh"
       class="text-color-secondary"
       text
@@ -32,6 +32,7 @@
     scrollHeight="flex"
     :loading="mainStore.isTreeLoading"
     v-model:selectionKeys="selectedKey"
+    v-model:expandedKeys="expandedKeys"
     :pt="{
       root: {
         class: 'p-0',
@@ -67,7 +68,14 @@ import { useMainStore } from "@/store/main";
 import { toIcon } from "@/constants/languages";
 
 const mainStore = useMainStore();
-const selectedKey = ref<any>(null);
+const selectedKey = ref<any>({});
+const expandedKeys = ref<any>({});
+
+async function onRefreshTree(){
+  await mainStore.refreshTree();
+  selectedKey.value = {}; 
+  expandedKeys.value = {}; 
+}
 
 async function onNodeExpand(node: any) {
   await mainStore.updateTreeNode(node);

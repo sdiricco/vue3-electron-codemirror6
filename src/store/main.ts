@@ -2,12 +2,10 @@ import { defineStore } from "pinia";
 import { createTree, openDialog, saveDialog, setTitle, updateDirectoryTree, watchDir } from "@/electronRenderer";
 import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
-import { readDir } from "@/services/nodeApi";
-import {updateTreeNodeById} from "@/utils/tree"
-import {languagesMap, toIcon} from "@/constants/languages"
 import {useSettingsStore} from "@/store/settings"
 import { ipcRenderer } from "electron";
 import { Channel } from "@/types";
+import { JSONClone } from "@/utils/helpers";
 
 export type RootState = {
   file: {
@@ -58,6 +56,7 @@ export const useMainStore = defineStore("main", {
       this.editorTempValue = ''
     },
 
+    //select node
     async selectNode(node:any){
       if(node.item.type === 'directory'){
         return false
@@ -74,18 +73,20 @@ export const useMainStore = defineStore("main", {
       return true;
     },
 
+    //Load children 
     async updateTreeNode(_node:any){
       if(_node.children){
         return false;
       }
       this.isTreeLoading = true
-      const tree = JSON.parse(JSON.stringify(this.tree))
-      const node = JSON.parse(JSON.stringify(_node))
+      const tree = JSONClone(this.tree)
+      const node = JSONClone(_node)
       this.tree = await updateDirectoryTree({tree, node})
       this.isTreeLoading = false
       return true
     },
 
+    //refresh tree
     async refreshTree(){
       if (!this.folderPath) {
         return;
@@ -93,7 +94,6 @@ export const useMainStore = defineStore("main", {
       this.isTreeLoading = true
       this.tree = await createTree(this.folderPath);
       this.isTreeLoading = false
-      
     },
 
     //open file

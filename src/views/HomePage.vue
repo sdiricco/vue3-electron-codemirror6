@@ -39,14 +39,12 @@ import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
-import { toIcon } from "@/constants/languages";
 
 const languageMenuModalVisible = ref(false);
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
 const editorRef = ref<any>(null);
-const selectedKey = ref<any>(null);
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
@@ -78,15 +76,13 @@ onMenuAction(async (data: any) => {
 
 const title = computed(() => mainStore.file.name);
 const isFileChanged = computed(() => mainStore.isFileChanged);
-const file = computed(() => mainStore.file);
 const fileValue = computed(() => mainStore.file.value);
 
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
-watch(fileValue,  (value) => {
-  editorRef.value.updateValue(value)
-})
-
+watch(fileValue, (value) => {
+  editorRef.value.updateValue(value);
+});
 
 onMounted(async () => {
   await mainStore.updateWindowTitle();
@@ -97,8 +93,4 @@ onMounted(async () => {
   height: calc(100vh - 2rem);
   width: 100%;
 }
-
-
-
-
 </style>

@@ -119,7 +119,7 @@ export function handleFS(win: BrowserWindow) {
     try {
       await tree.destroy();
       result.data = await tree.create(dirPath);
-      tree.on('update-tree', (tree) => sendToClient(win, Channel.OnNewTree, tree))
+      // tree.on('update-tree', (tree) => sendToClient(win, Channel.OnNewTree, tree))
     } catch (e) {
       result.error = { ...error, ...{ details: e.message } };
     }
@@ -146,38 +146,4 @@ export function handleFS(win: BrowserWindow) {
     }
     return result;
   })
-
-  // watch directory
-  ipcMain.handle(Channel.WatchDir, async (_evt, dir = "") => {
-    const result = {
-      data: null,
-      error: null,
-    };
-    const error: IError = {
-      code: 0,
-      message: "Error executing <watch dir()> electron API",
-      details: "",
-      type: "electron",
-      channel: Channel.WatchDir,
-    };
-    try {
-      const log = console.log.bind(console);
-      const watcher = chokidar.watch(dir, {
-        ignoreInitial: true,
-        depth: 0
-      });
-
-      // praticamente va aggiunto un watcher per ogni sotto directory con la configurazione come sopra
-      // ogni volta che aprirò una nuova directory, (esiste il campo children) verrà aggiunto un watcher
-      // quindi devo creare il tree lato backend
-      watcher
-        .on("add", (path) => log(`File ${path} has been added`))
-        .on("addDir", (path) => log(`File ${path} has been added`))
-        .on("change", (path) => log(`File ${path} has been changed`))
-        .on("unlink", (path) => log(`File ${path} has been removed`));
-    } catch (e) {
-      result.error = { ...error, ...{ details: e.message } };
-    }
-    return result;
-  });
 }
