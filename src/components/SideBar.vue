@@ -1,5 +1,10 @@
 <template>
-  <div class="flex justify-content-end">
+  <div class="flex justify-content-between align-items-center">
+    <InputText size='small' type="text" class="custom-input" @input="onInput" :value="mainStore.folderPath" :spellcheck='false' :pt="{
+      root:{
+        class:'p-1 disable-border opacity-100 w-full text-overflow-ellipsis'
+      }
+    }" />
     <Button
       @click="onRefreshTree"
       icon="pi pi-refresh"
@@ -22,13 +27,11 @@
       },
     }"></Divider>
   <div v-if="!mainStore.tree.length" class="flex align-items-center w-full justify-content-center flex-column p-3">
-    <div class="mb-3">
-      You have not yet opened a folder
-    </div>
-    <Button label="Open Folder" class="w-full text-white" @click="mainStore.openFolder"></Button>
+    <Button size='small' label="Open Folder" class="w-full text-white" @click="mainStore.openFolder"></Button>
 
   </div>
   <Tree
+    v-else
     class="custom-tree"
     @node-expand="onNodeExpand"
     @node-select="onNodeSelect"
@@ -80,6 +83,13 @@ const mainStore = useMainStore();
 const selectedKey = ref<any>({});
 const expandedKeys = ref<any>({});
 
+function onInput(evt:any){
+  evt.preventDefault();
+  evt.stopPropagation();
+  evt.target.value = mainStore.folderPath
+
+}
+
 async function onRefreshTree() {
   await mainStore.refreshTree();
   selectedKey.value = {};
@@ -107,4 +117,18 @@ function getIcon(node: any) {
   padding: 0px;
   cursor: pointer;
 }
+
+.disable-border{
+  border: none;
+}
+/* 
+.custom-input{
+  caret-color: transparent;
+} */
+
+.custom-input:enabled:focus{
+  box-shadow: none;
+  
+}
+
 </style>
