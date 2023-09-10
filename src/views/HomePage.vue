@@ -4,6 +4,13 @@
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
+      <TabView :scrollable="true" :pt="{
+        panelContainer:{
+          class:'p-0'
+        }
+      }">
+        <TabPanel v-for="tab in scrollableTabs" :key="tab.title" :header="tab.title"> </TabPanel>
+      </TabView>
       <!-- CODEMIRROR EDITOR -->
       <CodeMirror6
         ref="editorRef"
@@ -45,11 +52,12 @@ const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
 const editorRef = ref<any>(null);
-const explorer = ref(true)
+const explorer = ref(true);
+
+const scrollableTabs = ref(Array.from({ length: 5 }, (_, i) => ({ title: `Tab ${i + 1}`, content: `Tab ${i + 1} Content` })));
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
-
     //File
     case Types.Menu.openFolder:
       await mainStore.openFolder();
@@ -100,5 +108,9 @@ onMounted(async () => {
 .panel {
   height: calc(100vh - 2rem);
   width: 100%;
+}
+
+.custom-tabs :deep(.p-tabview-panels){
+  padding: 0px;
 }
 </style>
