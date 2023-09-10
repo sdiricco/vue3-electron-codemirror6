@@ -1,6 +1,6 @@
 <template>
   <Splitter style="border: none" class="panel">
-    <SplitterPanel :size="25">
+    <SplitterPanel :size="25" v-show="explorer">
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
@@ -45,9 +45,12 @@ const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
 const editorRef = ref<any>(null);
+const explorer = ref(true)
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
+
+    //File
     case Types.Menu.openFolder:
       await mainStore.openFolder();
       break;
@@ -68,6 +71,11 @@ onMenuAction(async (data: any) => {
       break;
     case Types.Menu.themes:
       themeMenuModalVisible.value = true;
+      break;
+
+    //View
+    case Types.Menu.toggleExplorer:
+      explorer.value = !explorer.value;
       break;
     default:
       break;

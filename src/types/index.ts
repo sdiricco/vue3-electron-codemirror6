@@ -24,12 +24,16 @@ export interface ISaveDialogReturnValue {
 }
 
 export enum Menu {
+  //file
   openFile = "file/open",
   openFolder = "file/open-folder",
   saveFile = "file/save",
   saveAsFile = "file/save-as",
   newFile = "file/new",
-  themes = "file/themes"
+  themes = "file/themes",
+  //view
+  toggleExplorer = "view/toggle-explorer"
+
 }
 
 export enum Channel {

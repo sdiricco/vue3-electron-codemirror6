@@ -8,7 +8,6 @@
       :pt="{
         root: {
           class: 'm-1',
-
           style: {
             height: '1.5rem',
             width: '1.5rem',
@@ -22,8 +21,15 @@
         class: 'm-0',
       },
     }"></Divider>
+  <div v-if="!mainStore.tree.length" class="flex align-items-center w-full justify-content-center flex-column p-3">
+    <div class="mb-3">
+      You have not yet opened a folder
+    </div>
+    <Button label="Open Folder" class="w-full text-white" @click="mainStore.openFolder"></Button>
+
+  </div>
   <Tree
-    class="custom-tree pt-2"
+    class="custom-tree"
     @node-expand="onNodeExpand"
     @node-select="onNodeSelect"
     selectionMode="single"
@@ -36,6 +42,9 @@
     :pt="{
       root: {
         class: 'p-0',
+        style: {
+          height: 'calc(100% - 32px)',
+        },
       },
       node: {
         class: 'p-0',
@@ -71,10 +80,10 @@ const mainStore = useMainStore();
 const selectedKey = ref<any>({});
 const expandedKeys = ref<any>({});
 
-async function onRefreshTree(){
+async function onRefreshTree() {
   await mainStore.refreshTree();
-  selectedKey.value = {}; 
-  expandedKeys.value = {}; 
+  selectedKey.value = {};
+  expandedKeys.value = {};
 }
 
 async function onNodeExpand(node: any) {

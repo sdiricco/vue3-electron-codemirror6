@@ -109,6 +109,7 @@ export function create(win, onClickItem) {
   },
   // { role: 'viewMenu' }
   {
+    id:'view',
     label: 'View',
     submenu: [
       { role: 'reload' },
@@ -119,6 +120,13 @@ export function create(win, onClickItem) {
       { role: 'zoomIn' },
       { role: 'zoomOut' },
       { type: 'separator' },
+      {
+        id: "view/toggle-explorer",
+        parentId: "view",
+        label: "Toggle Explorer",
+        accelerator: "Ctrl + B",
+        click: (menuItem) => onClickItem({...optionsFiltered(menuItem)})
+      },
       { role: 'togglefullscreen' }
     ]
   },
