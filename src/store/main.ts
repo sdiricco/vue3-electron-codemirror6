@@ -89,11 +89,14 @@ export const useMainStore = defineStore("main", {
         return false
       }
       const filePath = node.item.path;  
-      const response = await readFile(filePath);
-      this.file = response;
-      this.tempFileList.push(response);
-      this.tempFile = response;
-      this.editorTempValue = response.value;
+      const file = await readFile(filePath);
+      this.file = file;
+      const tempFile = this.tempFileList.find(f => f.path === file.path);
+      if (!tempFile) {
+        this.tempFileList.push(file);
+      }
+      this.tempFile = file;
+      this.editorTempValue = file.value;
       const settingsStore = useSettingsStore();
       const selectedLanguage = settingsStore.languages.find(l => l.value === node.item.language)
       if (selectedLanguage) {
