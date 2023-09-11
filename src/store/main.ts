@@ -8,6 +8,14 @@ import { Channel } from "@/types";
 import { JSONClone } from "@/utils/helpers";
 
 export type RootState = {
+  tempFileList: Array<any>,
+  tempFile: {
+    ext: string;
+    name: string;
+    path: string;
+    stat: object;
+    value: string;
+  },
   file: {
     ext: string;
     name: string;
@@ -22,8 +30,27 @@ export type RootState = {
   isTreeLoading: boolean;
 };
 
+/**
+ * tempFileList
+ * editorTempValue
+ * tempFile
+ * 
+ */
+
 export const useMainStore = defineStore("main", {
+
+  
   state: ():RootState => ({ 
+
+    tempFileList:[],
+    tempFile: {
+      ext: '',
+      name: '',
+      path: '',
+      stat: {},
+      value: ''
+    },
+
     file: {
       ext: '',
       name: '',
@@ -61,9 +88,11 @@ export const useMainStore = defineStore("main", {
       if(node.item.type === 'directory'){
         return false
       }
-      const filePath = node.item.path;
+      const filePath = node.item.path;  
       const response = await readFile(filePath);
       this.file = response;
+      this.tempFileList.push(response);
+      this.tempFile = response;
       this.editorTempValue = response.value;
       const settingsStore = useSettingsStore();
       const selectedLanguage = settingsStore.languages.find(l => l.value === node.item.language)

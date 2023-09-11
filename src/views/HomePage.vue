@@ -4,12 +4,12 @@
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
-      <TabView :scrollable="true" :pt="{
+      <TabView :scrollable="true" @tab-change="onTabChange" :pt="{
         panelContainer:{
           class:'p-0'
         }
       }">
-        <TabPanel v-for="tab in scrollableTabs" :key="tab.title" :header="tab.title"> </TabPanel>
+        <TabPanel v-for="file in mainStore.tempFileList" :key="file?.path" :header="file.name" > </TabPanel>
       </TabView>
       <!-- CODEMIRROR EDITOR -->
       <CodeMirror6
@@ -54,7 +54,10 @@ const themeMenuModalVisible = ref(false);
 const editorRef = ref<any>(null);
 const explorer = ref(true);
 
-const scrollableTabs = ref(Array.from({ length: 5 }, (_, i) => ({ title: `Tab ${i + 1}`, content: `Tab ${i + 1} Content` })));
+function onTabChange(evt:any){
+  const index: number = evt.index;
+  mainStore.tempFile = mainStore.tempFileList[index];
+}
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
@@ -93,10 +96,14 @@ onMenuAction(async (data: any) => {
 const title = computed(() => mainStore.file.name);
 const isFileChanged = computed(() => mainStore.isFileChanged);
 const fileValue = computed(() => mainStore.file.value);
+const tempFileValue = computed(() => mainStore.tempFile.value)
 
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
 watch(fileValue, (value) => {
+  editorRef.value.updateValue(value);
+});
+watch(tempFileValue, (value) => {
   editorRef.value.updateValue(value);
 });
 
