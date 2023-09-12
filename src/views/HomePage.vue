@@ -5,6 +5,7 @@
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
       <TabView
+        :active-index="activeIndexTab"
         :scrollable="true"
         @tab-change="onTabChange"
         :pt="{
@@ -12,7 +13,29 @@
             class: 'p-0',
           },
         }">
-        <TabPanel v-for="file in mainStore.tempFileList" :key="file?.path" :header="file.name"> </TabPanel>
+        <TabPanel v-for="file in mainStore.tempFileList" :key="file?.path" :pt="{
+          headerAction:{
+            class: 'p-2'
+          }
+        }">
+          <template #header>
+            <span class="mr-2 text-sm">{{ file.name }}</span>
+            <Button
+              @click="removeFile(file)"
+              class="text-color-secondary"
+              icon="pi pi-times"
+              text
+              size="small"
+              :pt="{
+                root: {
+                  style: {
+                    height: '0.8rem',
+                    width: '0.8rem',
+                  },
+                },
+              }" />
+          </template>
+        </TabPanel>
       </TabView>
       <!-- CODEMIRROR EDITOR -->
       <CodeMirror6
@@ -62,6 +85,16 @@ function onTabChange(evt: any) {
   mainStore.tempFile = mainStore.tempFileList[index];
 }
 
+function removeFile(file:any){
+  const index = mainStore.tempFileList.findIndex((f) => f.path === file.path);
+  mainStore.tempFileList.splice(index, 1)
+}
+
+const activeIndexTab = computed(() => {
+  const tempFilePath = mainStore.tempFile.path;
+  return mainStore.tempFileList.findIndex((f) => f.path === tempFilePath);
+});
+
 onMenuAction(async (data: any) => {
   switch (data.id) {
     //File
@@ -98,14 +131,10 @@ onMenuAction(async (data: any) => {
 
 const title = computed(() => mainStore.file.name);
 const isFileChanged = computed(() => mainStore.isFileChanged);
-const fileValue = computed(() => mainStore.file.value);
 const tempFileValue = computed(() => mainStore.tempFile.value);
 
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
-watch(fileValue, (value) => {
-  editorRef.value.updateValue(value);
-});
 watch(tempFileValue, (value) => {
   editorRef.value.updateValue(value);
 });

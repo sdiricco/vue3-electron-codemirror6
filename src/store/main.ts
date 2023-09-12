@@ -66,14 +66,14 @@ export const useMainStore = defineStore("main", {
   }),
 
   getters: {
-    isFileChanged: (state) => state.file.value !== state.editorTempValue 
+    isFileChanged: (state) => state.tempFile.value !== state.editorTempValue 
   },
 
   actions: {
 
     //new file
     async newFile(){
-      this.file = {
+      this.tempFile = {
         ext: '',
         name: '',
         path: '',
@@ -89,14 +89,17 @@ export const useMainStore = defineStore("main", {
         return false
       }
       const filePath = node.item.path;  
-      const file = await readFile(filePath);
-      this.file = file;
-      const tempFile = this.tempFileList.find(f => f.path === file.path);
+      const tempFile = this.tempFileList.find(f => f.path === filePath);
       if (!tempFile) {
+        const file = await readFile(filePath);
         this.tempFileList.push(file);
+        this.tempFile = file
+        this.editorTempValue = file.value;
       }
-      this.tempFile = file;
-      this.editorTempValue = file.value;
+      else{
+        this.tempFile = tempFile;
+        this.editorTempValue = tempFile.value;
+      }
       const settingsStore = useSettingsStore();
       const selectedLanguage = settingsStore.languages.find(l => l.value === node.item.language)
       if (selectedLanguage) {
@@ -165,9 +168,9 @@ export const useMainStore = defineStore("main", {
         if (!filePath) {
           return false;
         }
-        response = await readFile(filePath);
-        this.file = response;
-        this.editorTempValue = response.value
+        const file = await readFile(filePath);
+        this.tempFile = file;
+        this.editorTempValue = file.value
         return true;
       } catch (error) {
         console.log(error)
@@ -177,13 +180,13 @@ export const useMainStore = defineStore("main", {
     //save file
     async saveFile() {
       try {
-        const filePath = this.file.path || ''
+        const filePath = this.tempFile.path || ''
         const value = this.editorTempValue || ''
         if (filePath) {
           await saveFile({filePath, value})
-          const response = await readFile(filePath);
-          this.file = response;
-          this.editorTempValue = response.value
+          const file = await readFile(filePath);
+          this.tempFile = file;
+          this.editorTempValue = file.value
         }
         else {
           this.saveAsFile();
@@ -204,9 +207,9 @@ export const useMainStore = defineStore("main", {
         const filePath = response.filePath
         const value = this.editorTempValue || ''
         await saveFile({filePath, value})
-        response = await readFile(filePath);
-        this.file = response;
-        this.editorTempValue = response.value
+        const file = await readFile(filePath);
+        this.tempFile = file;
+        this.editorTempValue = file.value
       } catch (error) {
         console.log(error)
       }
