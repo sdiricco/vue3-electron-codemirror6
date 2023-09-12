@@ -4,47 +4,7 @@
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
-      <TabView
-        :active-index="activeIndexTab"
-        :scrollable="true"
-        @tab-change="onTabChange"
-        :pt="{
-          panelContainer: {
-            class: 'p-0',
-          },
-        }">
-        <TabPanel v-for="file in mainStore.tempFileList" :key="file?.path" :pt="{
-          headerAction:{
-            class: 'p-2'
-          }
-        }">
-          <template #header>
-            <span class="mr-2 text-sm">{{ file.name }}</span>
-            <Button
-              @click="removeFile(file)"
-              class="text-color-secondary"
-              icon="pi pi-times"
-              text
-              size="small"
-              :pt="{
-                root: {
-                  style: {
-                    height: '0.8rem',
-                    width: '0.8rem',
-                  },
-                },
-              }" />
-          </template>
-        </TabPanel>
-      </TabView>
-      <!-- CODEMIRROR EDITOR -->
-      <CodeMirror6
-        ref="editorRef"
-        class="cm6-editor"
-        style="height: 100%"
-        :theme="settingsStore.selectedTheme.value"
-        :language="settingsStore.getSelectedCodemirrorLang"
-        @input="(v:string) => mainStore.editorTempValue = v" />
+      <Editor/>
     </SplitterPanel>
   </Splitter>
 
@@ -63,11 +23,11 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from "vue";
-import CodeMirror6 from "@/components/CodeMirror6.vue";
 import LanguageMenu from "@/components/LanguageMenu.vue";
 import ThemeMenu from "@/components/ThemeMenu.vue";
 import SideBar from "@/components/SideBar.vue";
 import Footer from "@/components/Footer.vue";
+import Editor from "@/components/Editor.vue";
 import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
@@ -77,23 +37,8 @@ const languageMenuModalVisible = ref(false);
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
-const editorRef = ref<any>(null);
 const explorer = ref(true);
 
-function onTabChange(evt: any) {
-  const index: number = evt.index;
-  mainStore.tempFile = mainStore.tempFileList[index];
-}
-
-function removeFile(file:any){
-  const index = mainStore.tempFileList.findIndex((f) => f.path === file.path);
-  mainStore.tempFileList.splice(index, 1)
-}
-
-const activeIndexTab = computed(() => {
-  const tempFilePath = mainStore.tempFile.path;
-  return mainStore.tempFileList.findIndex((f) => f.path === tempFilePath);
-});
 
 onMenuAction(async (data: any) => {
   switch (data.id) {
@@ -106,9 +51,6 @@ onMenuAction(async (data: any) => {
       break;
     case Types.Menu.openFile:
       const success = await mainStore.openFile();
-      if (success) {
-        editorRef.value.updateValue(mainStore.file.value);
-      }
       break;
     case Types.Menu.saveFile:
       await mainStore.saveFile();
@@ -129,15 +71,12 @@ onMenuAction(async (data: any) => {
   }
 });
 
-const title = computed(() => mainStore.file.name);
+const title = computed(() => mainStore.tempFile.name);
 const isFileChanged = computed(() => mainStore.isFileChanged);
-const tempFileValue = computed(() => mainStore.tempFile.value);
 
 watch(title, mainStore.updateWindowTitle);
 watch(isFileChanged, mainStore.updateWindowTitle);
-watch(tempFileValue, (value) => {
-  editorRef.value.updateValue(value);
-});
+
 
 onMounted(async () => {
   await mainStore.updateWindowTitle();

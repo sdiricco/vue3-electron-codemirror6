@@ -20,14 +20,23 @@ export async function readFile(filePath = "") {
     path: "",
     value: "",
     stat: {},
+    info: {
+      type: "file",
+      language:""
+    }
   };
 
   const buffer = await fsProm.readFile(filePath);
+  const ext = path.extname(filePath)
+  const languages = langMap.languages(ext)
+  const language = languages && languages.length && languages[0]
+
   result.value = buffer.toString("utf8");
   result.stat = await fsProm.stat(filePath);
   result.name = path.basename(filePath);
   result.path = filePath;
-  result.ext = path.extname(filePath)
+  result.ext = ext;
+  result.info.language = language;
 
   return result;
 }

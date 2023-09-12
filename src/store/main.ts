@@ -15,13 +15,10 @@ export type RootState = {
     path: string;
     stat: object;
     value: string;
-  },
-  file: {
-    ext: string;
-    name: string;
-    path: string;
-    stat: object;
-    value: string;
+    info: {
+      type: string;
+      language:string;
+    }
   },
   folderPath: string;
   editorTempValue: string;
@@ -30,12 +27,6 @@ export type RootState = {
   isTreeLoading: boolean;
 };
 
-/**
- * tempFileList
- * editorTempValue
- * tempFile
- * 
- */
 
 export const useMainStore = defineStore("main", {
 
@@ -48,16 +39,13 @@ export const useMainStore = defineStore("main", {
       name: '',
       path: '',
       stat: {},
-      value: ''
+      value: '',
+      info: {
+        type: "",
+        language:""
+      }
     },
 
-    file: {
-      ext: '',
-      name: '',
-      path: '',
-      stat: {},
-      value: ''
-    },
     folderPath: '',
     editorTempValue: "",
     editorRef: ref(null),
@@ -78,7 +66,11 @@ export const useMainStore = defineStore("main", {
         name: '',
         path: '',
         stat: {},
-        value: ''
+        value: '',
+        info: {
+          type: "",
+          language:""
+        }
       },
       this.editorTempValue = ''
     },
@@ -100,11 +92,7 @@ export const useMainStore = defineStore("main", {
         this.tempFile = tempFile;
         this.editorTempValue = tempFile.value;
       }
-      const settingsStore = useSettingsStore();
-      const selectedLanguage = settingsStore.languages.find(l => l.value === node.item.language)
-      if (selectedLanguage) {
-        settingsStore.selectedLanguageValue = selectedLanguage.value
-      }
+
       return true;
     },
 
@@ -217,7 +205,7 @@ export const useMainStore = defineStore("main", {
 
     //update title
     async updateWindowTitle(){
-      const title = `${this.isFileChanged ? '\u25CF ' : ''}${this.file.path || 'Untitled'}`
+      const title = `${this.isFileChanged ? '\u25CF ' : ''}${this.tempFile.path || 'Untitled'}`
       await setTitle(title)
     }
   },
