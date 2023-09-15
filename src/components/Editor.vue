@@ -7,7 +7,7 @@
     style="height: 100%"
     :theme="settingsStore.selectedTheme.value"
     :language="settingsStore.getSelectedCodemirrorLang"
-    @input="(v:string) => mainStore.editorTempValue = v" />
+    @input="(v:string) => mainStore.tempFile.value = v" />
 </template>
 
 <script setup lang="ts">

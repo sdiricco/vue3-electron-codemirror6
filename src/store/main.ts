@@ -2,9 +2,6 @@ import { defineStore } from "pinia";
 import { createTree, openDialog, saveDialog, setTitle, updateDirectoryTree, watchDir } from "@/electronRenderer";
 import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
-import {useSettingsStore} from "@/store/settings"
-import { ipcRenderer } from "electron";
-import { Channel } from "@/types";
 import { JSONClone } from "@/utils/helpers";
 
 export type RootState = {
@@ -21,7 +18,6 @@ export type RootState = {
     }
   },
   folderPath: string;
-  editorTempValue: string;
   editorRef: any;
   tree: Array<any>;
   isTreeLoading: boolean;
@@ -47,14 +43,13 @@ export const useMainStore = defineStore("main", {
     },
 
     folderPath: '',
-    editorTempValue: "",
     editorRef: ref(null),
     tree: [],
     isTreeLoading: false
   }),
 
   getters: {
-    isFileChanged: (state) => state.tempFile.value !== state.editorTempValue 
+    isFileChanged: () => false,
   },
 
   actions: {
@@ -71,8 +66,7 @@ export const useMainStore = defineStore("main", {
           type: "",
           language:""
         }
-      },
-      this.editorTempValue = ''
+      }
     },
 
     //select node
@@ -81,19 +75,20 @@ export const useMainStore = defineStore("main", {
         return false
       }
       const filePath = node.item.path;  
+
+      //check if file is already opened
       const tempFile = this.tempFileList.find(f => f.path === filePath);
-      if (!tempFile) {
+
+      //If file already opened, load it from tempFileList
+      if (tempFile) {
+        this.tempFile = tempFile;
+      }
+      //else read file from file system and add it to tempFileList
+      else{
         const file = await readFile(filePath);
         this.tempFileList.push(file);
         this.tempFile = file
-        this.editorTempValue = file.value;
       }
-      else{
-        this.tempFile = tempFile;
-        this.editorTempValue = tempFile.value;
-      }
-
-      return true;
     },
 
     //Load children 
@@ -123,20 +118,20 @@ export const useMainStore = defineStore("main", {
     async openFolder(){
       let response = null;
       try {
+        //open dialog
         response = await openDialog({properties: ['openDirectory']})
         if (response.canceled) {
           return false;
         }
+        //get folder path
         const folderPath:any = response.filePaths && response.filePaths.length && response.filePaths[0];
         if (!folderPath) {
           return false;
         }
+
         this.folderPath = folderPath
         this.isTreeLoading = true
         this.tree = await createTree(folderPath);
-        ipcRenderer.on(Channel.OnNewTree, (evt, tree)=> {
-          this.tree = tree;
-        })
         this.isTreeLoading = false;
         return true;
       } catch (error) {
@@ -148,17 +143,19 @@ export const useMainStore = defineStore("main", {
     async openFile() {
       let response = null;
       try {
+        //open dialog
         response = await openDialog({})
         if (response.canceled) {
           return false;
         }
+        //get file path
         const filePath = response.filePaths && response.filePaths.length && response.filePaths[0];
         if (!filePath) {
           return false;
         }
+        //read file
         const file = await readFile(filePath);
         this.tempFile = file;
-        this.editorTempValue = file.value
         return true;
       } catch (error) {
         console.log(error)
@@ -169,12 +166,11 @@ export const useMainStore = defineStore("main", {
     async saveFile() {
       try {
         const filePath = this.tempFile.path || ''
-        const value = this.editorTempValue || ''
+        const value = this.tempFile.value || ''
         if (filePath) {
           await saveFile({filePath, value})
           const file = await readFile(filePath);
           this.tempFile = file;
-          this.editorTempValue = file.value
         }
         else {
           this.saveAsFile();
@@ -193,11 +189,10 @@ export const useMainStore = defineStore("main", {
           return;
         }
         const filePath = response.filePath
-        const value = this.editorTempValue || ''
+        const value = this.tempFile.value || ''
         await saveFile({filePath, value})
         const file = await readFile(filePath);
         this.tempFile = file;
-        this.editorTempValue = file.value
       } catch (error) {
         console.log(error)
       }
