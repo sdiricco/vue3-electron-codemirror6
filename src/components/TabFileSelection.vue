@@ -45,15 +45,15 @@ const mainStore = useMainStore();
 
 function onTabChange(evt: any) {
   const index: number = evt.index;
-  mainStore.tempFile = mainStore.tempFileList[index];
+  mainStore.activeIndex = index;
 }
 
 function removeFile(file: any) {
   const index = mainStore.tempFileList.findIndex((f) => f.path === file.path);
   mainStore.tempFileList.splice(index, 1);
   //check if file is selected
-  if (file.path === mainStore.tempFile.path) {
-    mainStore.tempFile = mainStore.tempFileList.length
+  if (file.path === mainStore.getActiveFile.path) {
+    mainStore.tempFileList[mainStore.activeIndex] = mainStore.tempFileList.length
       ? mainStore.tempFileList[0]
       : {
           ext: "",
@@ -70,7 +70,7 @@ function removeFile(file: any) {
 }
 
 const activeIndexTab = computed(() => {
-  const tempFilePath = mainStore.tempFile.path;
+  const tempFilePath = mainStore.getActiveFile && mainStore.getActiveFile.path;
   return mainStore.tempFileList.findIndex((f) => f.path === tempFilePath);
 });
 </script>

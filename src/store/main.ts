@@ -7,12 +7,7 @@ import { JSONClone } from "@/utils/helpers";
 /**
  * Riscrivere lo store per avere soltanto tempFileList e l'index del file corrente. Deve essere tolto tempFile che sarà soltando una computed.
  * Valutare se serve 'editorRef'. Il resto ok
- * 
- */
-
-export type RootState = {
-  tempFileList: Array<any>,
-  tempFile: {
+ *   tempFile: {
     ext: string;
     name: string;
     path: string;
@@ -23,6 +18,11 @@ export type RootState = {
       language:string;
     }
   },
+ */
+
+export type RootState = {
+  tempFileList: Array<any>,
+  activeIndex: number,
   folderPath: string;
   editorRef: any;
   tree: Array<any>;
@@ -36,18 +36,7 @@ export const useMainStore = defineStore("main", {
   state: ():RootState => ({ 
 
     tempFileList:[],
-    tempFile: {
-      ext: '',
-      name: '',
-      path: '',
-      stat: {},
-      value: '',
-      info: {
-        type: "",
-        language:""
-      }
-    },
-
+    activeIndex: -1,
     folderPath: '',
     editorRef: ref(null),
     tree: [],
@@ -56,23 +45,17 @@ export const useMainStore = defineStore("main", {
 
   getters: {
     isFileChanged: () => false,
+    getActiveFile: (state) => {
+      const exsitFile = state.tempFileList.length && state.activeIndex >= 0
+      return exsitFile ? state.tempFileList[state.activeIndex] : null
+    }
   },
 
   actions: {
 
     //new file
     async newFile(){
-      this.tempFile = {
-        ext: '',
-        name: '',
-        path: '',
-        stat: {},
-        value: '',
-        info: {
-          type: "",
-          language:""
-        }
-      }
+      
     },
 
     //select node
@@ -83,17 +66,17 @@ export const useMainStore = defineStore("main", {
       const filePath = node.item.path;  
 
       //check if file is already opened
-      const tempFile = this.tempFileList.find(f => f.path === filePath);
+      const activeIndex = this.tempFileList.findIndex(f => f.path === filePath);
 
       //If file already opened, load it from tempFileList
-      if (tempFile) {
-        this.tempFile = tempFile;
+      if (activeIndex >= 0) {
+        this.activeIndex = activeIndex
       }
       //else read file from file system and add it to tempFileList
       else{
         const file = await readFile(filePath);
         this.tempFileList.push(file);
-        this.tempFile = file
+        this.activeIndex = this.tempFileList.length - 1
       }
     },
 
@@ -161,7 +144,7 @@ export const useMainStore = defineStore("main", {
         }
         //read file
         const file = await readFile(filePath);
-        this.tempFile = file;
+        console.log(file)
         return true;
       } catch (error) {
         console.log(error)
@@ -171,12 +154,13 @@ export const useMainStore = defineStore("main", {
     //save file
     async saveFile() {
       try {
-        const filePath = this.tempFile.path || ''
-        const value = this.tempFile.value || ''
+        const tempFile = this.tempFileList[this.activeIndex]
+        const filePath = tempFile.path 
+        const value = tempFile.value || ''
         if (filePath) {
           await saveFile({filePath, value})
           const file = await readFile(filePath);
-          this.tempFile = file;
+          this.tempFileList[this.activeIndex] = file
         }
         else {
           this.saveAsFile();
@@ -194,11 +178,12 @@ export const useMainStore = defineStore("main", {
         if(response.canceled){
           return;
         }
+        const tempFile = this.tempFileList[this.activeIndex]
         const filePath = response.filePath
-        const value = this.tempFile.value || ''
+        const value = tempFile.value || ''
         await saveFile({filePath, value})
         const file = await readFile(filePath);
-        this.tempFile = file;
+        this.tempFileList[this.activeIndex] = file
       } catch (error) {
         console.log(error)
       }
@@ -206,7 +191,8 @@ export const useMainStore = defineStore("main", {
 
     //update title
     async updateWindowTitle(){
-      const title = `${this.isFileChanged ? '\u25CF ' : ''}${this.tempFile.path || 'Untitled'}`
+      const filePath = this.getActiveFile && this.getActiveFile.path || null
+      const title = `${this.isFileChanged ? '\u25CF ' : ''}${filePath || 'Untitled'}`
       await setTitle(title)
     }
   },

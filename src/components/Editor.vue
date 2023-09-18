@@ -7,7 +7,7 @@
     style="height: calc(100% - 40px)"
     :theme="settingsStore.selectedTheme.value"
     :language="settingsStore.getSelectedCodemirrorLang"
-    @input="(v:string) => mainStore.tempFile.value = v" />
+    @input="onCodeMirrorChange" />
 </template>
 
 <script setup lang="ts">
@@ -20,13 +20,19 @@ import TabFileSelection from "./TabFileSelection.vue";
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const editorRef = ref<any>(null);
-const tempFilePath = computed(() => mainStore.tempFile.path);
+const tempFilePath = computed(() => mainStore.getActiveFile && mainStore.getActiveFile.path);
+
+function onCodeMirrorChange(value:any){
+  if (mainStore.tempFileList.length && mainStore.activeIndex >= 0) {
+    mainStore.tempFileList[mainStore.activeIndex].value = value
+  }
+}
 
 watch(tempFilePath, () => {
-  const value = mainStore.tempFile.value;
+  const value = mainStore.getActiveFile.value;
   editorRef.value.updateValue(value);
   const settingsStore = useSettingsStore();
-  const selectedLanguage = settingsStore.languages.find((l) => l.value === mainStore.tempFile.info.language);
+  const selectedLanguage = settingsStore.languages.find((l) => l.value === mainStore.getActiveFile.info.language);
   if (selectedLanguage) {
     settingsStore.selectedLanguageValue = selectedLanguage.value;
   }

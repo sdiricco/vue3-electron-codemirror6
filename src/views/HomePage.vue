@@ -71,7 +71,7 @@ onMenuAction(async (data: any) => {
   }
 });
 
-const title = computed(() => mainStore.tempFile.name);
+const title = computed(() => mainStore.getActiveFile && mainStore.getActiveFile.name);
 const isFileChanged = computed(() => mainStore.isFileChanged);
 
 watch(title, mainStore.updateWindowTitle);
