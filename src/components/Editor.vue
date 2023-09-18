@@ -1,10 +1,10 @@
 <template>
-  <TabFileSelection/>
+  <TabFileSelection style="height: 40px;" class="flex align-items-end"/>
   <!-- CODEMIRROR EDITOR -->
   <CodeMirror6
     ref="editorRef"
     class="cm6-editor"
-    style="height: 100%"
+    style="height: calc(100% - 40px)"
     :theme="settingsStore.selectedTheme.value"
     :language="settingsStore.getSelectedCodemirrorLang"
     @input="(v:string) => mainStore.tempFile.value = v" />
