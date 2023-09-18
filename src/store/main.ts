@@ -4,6 +4,12 @@ import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
 import { JSONClone } from "@/utils/helpers";
 
+/**
+ * Riscrivere lo store per avere soltanto tempFileList e l'index del file corrente. Deve essere tolto tempFile che sarà soltando una computed.
+ * Valutare se serve 'editorRef'. Il resto ok
+ * 
+ */
+
 export type RootState = {
   tempFileList: Array<any>,
   tempFile: {
