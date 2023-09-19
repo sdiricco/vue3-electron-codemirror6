@@ -1,5 +1,4 @@
 <template>
-  <!-- <TabFileSelection style="height: 40px;" class="flex align-items-end"/> -->
   <EditorFileSelection />
   <!-- CODEMIRROR EDITOR -->
   <CodeMirror6
@@ -16,7 +15,6 @@ import { computed, ref, watch } from "vue";
 import CodeMirror6 from "@/components/CodeMirror6.vue";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
-import TabFileSelection from "./TabFileSelection.vue";
 import EditorFileSelection from "./EditorFileSelection.vue";
 
 const mainStore = useMainStore();
@@ -31,6 +29,9 @@ function onCodeMirrorChange(value:any){
 }
 
 watch(tempFilePath, () => {
+  if (!mainStore.getActiveFile) {
+    return;
+  }
   const value = mainStore.getActiveFile.value;
   editorRef.value.updateValue(value);
   const settingsStore = useSettingsStore();

@@ -42,8 +42,8 @@ export const useMainStore = defineStore("main", {
       const index = this.tempFileList.findIndex((f) => f.path === file.path);
       const tempFileList = JSONClone(this.tempFileList)
       tempFileList.splice(index, 1)
-      this.activeIndex = tempFileList.length - 1 
       this.tempFileList = tempFileList
+      this.activeIndex = tempFileList.length - 1 
     },
 
     //select file from tree

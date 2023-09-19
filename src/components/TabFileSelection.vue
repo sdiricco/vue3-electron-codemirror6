@@ -45,7 +45,6 @@ const mainStore = useMainStore();
 function removeFile(file: any) {
   console.log('removeFile')
   mainStore.removeTempFile(file);
-
 }
 </script>
 <style scoped>
