@@ -4,22 +4,6 @@ import {readFile, saveFile} from "@/services/nodeApi"
 import {ref} from "vue"
 import { JSONClone } from "@/utils/helpers";
 
-/**
- * Riscrivere lo store per avere soltanto tempFileList e l'index del file corrente. Deve essere tolto tempFile che sarà soltando una computed.
- * Valutare se serve 'editorRef'. Il resto ok
- *   tempFile: {
-    ext: string;
-    name: string;
-    path: string;
-    stat: object;
-    value: string;
-    info: {
-      type: string;
-      language:string;
-    }
-  },
- */
-
 export type RootState = {
   tempFileList: Array<any>,
   activeIndex: number,
@@ -29,12 +13,8 @@ export type RootState = {
   isTreeLoading: boolean;
 };
 
-
 export const useMainStore = defineStore("main", {
-
-  
   state: ():RootState => ({ 
-
     tempFileList:[],
     activeIndex: -1,
     folderPath: '',
@@ -55,11 +35,11 @@ export const useMainStore = defineStore("main", {
 
     //new file
     async newFile(){
-      
+      console.log('new file not supported')
     },
 
-    //select node
-    async selectNode(node:any){
+    //select file from tree
+    async selectFileFromTree(node:any){
       if(node.item.type === 'directory'){
         return false
       }

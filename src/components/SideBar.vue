@@ -95,7 +95,7 @@ async function onNodeExpand(node: any) {
 }
 
 async function onNodeSelect(node: any) {
-  await mainStore.selectNode(node);
+  await mainStore.selectFileFromTree(node);
 }
 
 function getIcon(node: any) {
