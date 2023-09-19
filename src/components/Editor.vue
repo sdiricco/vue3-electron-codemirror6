@@ -1,5 +1,6 @@
 <template>
-  <TabFileSelection style="height: 40px;" class="flex align-items-end"/>
+  <!-- <TabFileSelection style="height: 40px;" class="flex align-items-end"/> -->
+  <EditorFileSelection />
   <!-- CODEMIRROR EDITOR -->
   <CodeMirror6
     ref="editorRef"
@@ -16,6 +17,7 @@ import CodeMirror6 from "@/components/CodeMirror6.vue";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
 import TabFileSelection from "./TabFileSelection.vue";
+import EditorFileSelection from "./EditorFileSelection.vue";
 
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();

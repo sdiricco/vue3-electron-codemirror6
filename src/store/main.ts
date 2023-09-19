@@ -38,6 +38,14 @@ export const useMainStore = defineStore("main", {
       console.log('new file not supported')
     },
 
+    removeTempFile(file:any){
+      const index = this.tempFileList.findIndex((f) => f.path === file.path);
+      const tempFileList = JSONClone(this.tempFileList)
+      tempFileList.splice(index, 1)
+      this.activeIndex = tempFileList.length - 1 
+      this.tempFileList = tempFileList
+    },
+
     //select file from tree
     async selectFileFromTree(node:any){
       if(node.item.type === 'directory'){
