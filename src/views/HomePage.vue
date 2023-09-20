@@ -4,7 +4,9 @@
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
-      <Editor v-if="mainStore.getActiveFile"/>
+      <div v-show="mainStore.getActiveFile" style="height: calc(100% - 40px)">
+        <Editor />
+      </div>
       <WelcomePage v-if="!mainStore.getActiveFile"/>
     </SplitterPanel>
   </Splitter>
@@ -52,7 +54,7 @@ onMenuAction(async (data: any) => {
       await mainStore.newFile();
       break;
     case Types.Menu.openFile:
-      const success = await mainStore.openFile();
+      await mainStore.openFile();
       break;
     case Types.Menu.saveFile:
       await mainStore.saveFile();
@@ -74,14 +76,16 @@ onMenuAction(async (data: any) => {
 });
 
 const title = computed(() => mainStore.getActiveFile && mainStore.getActiveFile.name);
-const isFileChanged = computed(() => mainStore.isFileChanged);
+const isSomeFileChanged = computed(() => mainStore.isSomeFileChanged);
 
 watch(title, mainStore.updateWindowTitle);
-watch(isFileChanged, mainStore.updateWindowTitle);
+watch(isSomeFileChanged, mainStore.updateWindowTitle);
 
 
 onMounted(async () => {
   await mainStore.updateWindowTitle();
+  mainStore.updateWindowTitle();
+
 });
 </script>
 <style scoped>

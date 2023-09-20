@@ -4,7 +4,7 @@
   <CodeMirror6
     ref="editorRef"
     class="cm6-editor"
-    style="height: calc(100% - 40px)"
+    style="height: 100%"
     :theme="settingsStore.selectedTheme.value"
     :language="settingsStore.getSelectedCodemirrorLang"
     @input="onCodeMirrorChange" />
@@ -16,17 +16,21 @@ import CodeMirror6 from "@/components/CodeMirror6.vue";
 import { useMainStore } from "@/store/main";
 import { useSettingsStore } from "@/store/settings";
 import EditorFileSelection from "./EditorFileSelection.vue";
+import { JSONClone } from "@/utils/helpers";
 
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const editorRef = ref<any>(null);
 const tempFilePath = computed(() => mainStore.getActiveFile && mainStore.getActiveFile.path);
 
-function onCodeMirrorChange(value:any){
-  console.log('onCodeMirrorChange', value)
+function onCodeMirrorChange(value: any) {
   if (mainStore.tempFileList.length && mainStore.activeIndex >= 0) {
-    mainStore.tempFileList[mainStore.activeIndex].value = value
+    if (mainStore.tempFileList[mainStore.activeIndex].value !== value) {
+      mainStore.tempFileList[mainStore.activeIndex].value = value;
+      mainStore.tempFileList[mainStore.activeIndex].isChanged = true;
+    }
   }
+
 }
 
 watch(tempFilePath, () => {
@@ -43,7 +47,6 @@ watch(tempFilePath, () => {
 });
 </script>
 <style scoped>
-
 .custom-tabs :deep(.p-tabview-panels) {
   padding: 0px;
 }

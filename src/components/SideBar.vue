@@ -20,12 +20,7 @@
         },
       }" />
   </div>
-  <div v-if="!mainStore.tree.length" class="flex align-items-center w-full justify-content-center flex-column p-3">
-    <Button size='small' label="Open Folder" class="w-full text-white" @click="mainStore.openFolder"></Button>
-
-  </div>
   <Tree
-    v-else
     class="custom-tree"
     @node-expand="onNodeExpand"
     @node-select="onNodeSelect"

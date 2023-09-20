@@ -44,11 +44,12 @@ const editorId = `editor-${uuidv4()}`
 const themeConfig = new Compartment();
 const languageConfig = new Compartment();
 
+
+
 let extensions: Array<Extension> = [
   basicSetup,
   search({ top: true }),
   EditorView.updateListener.of(function(e) {
-    console.log(e)
     if (e.docChanged) {
       emit('input', e.state.doc.toString())
     }

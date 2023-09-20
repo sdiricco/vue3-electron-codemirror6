@@ -19,6 +19,7 @@ export async function readFile(filePath = "") {
     ext: "",
     path: "",
     value: "",
+    isChanged: false,
     stat: {},
     info: {
       type: "file",
@@ -26,13 +27,14 @@ export async function readFile(filePath = "") {
     }
   };
 
+
+
   const buffer = await fsProm.readFile(filePath);
   const ext = path.extname(filePath)
   const languages = langMap.languages(ext)
   const language = languages && languages.length && languages[0]
 
   result.value = buffer.toString("utf8");
-  console.log('value: ', result.value)
   result.stat = await fsProm.stat(filePath);
   result.name = path.basename(filePath);
   result.path = filePath;

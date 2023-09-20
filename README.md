@@ -4,12 +4,8 @@
 
 # Codemirror 6
 
-
 Puoi trovare la documentazione ufficiale su [https://codemirror.net/](https://codemirror.net/).
 In particolare ti consiglio di vedere qualche [esempio](https://codemirror.net/examples/) e la documentazione tecnica partendo dalla [system guide](https://codemirror.net/docs/guide/)
-
-
-
 
 ## Autocompletamento
 

@@ -24,7 +24,7 @@ export const useMainStore = defineStore("main", {
   }),
 
   getters: {
-    isFileChanged: () => false,
+    isSomeFileChanged: (state) => state.tempFileList.some(f => f.isChanged),
     getActiveFile: (state) => {
       const exsitFile = state.tempFileList.length && state.activeIndex >= 0
       return exsitFile ? state.tempFileList[state.activeIndex] : null
@@ -161,6 +161,21 @@ export const useMainStore = defineStore("main", {
       }
     },
 
+    async saveAllTempFiles(){
+      const tempFileList = JSONClone(this.tempFileList);
+      for (let i = 0; i < tempFileList.length; i++) {
+        const file = tempFileList[i]
+        if (file.isChanged) {
+          const filePath = file.path
+          const value = file.value;
+          await saveFile({filePath, value})
+          const newFile = await readFile(file.path);
+          tempFileList[i] = newFile;
+        }
+      }
+      this.tempFileList = tempFileList;
+    },
+
     //save as file
     async saveAsFile() {
       try {
@@ -182,8 +197,7 @@ export const useMainStore = defineStore("main", {
 
     //update title
     async updateWindowTitle(){
-      const filePath = this.getActiveFile && this.getActiveFile.path || null
-      const title = `${this.isFileChanged ? '\u25CF ' : ''}${filePath || 'Untitled'}`
+      const title = `${this.isSomeFileChanged ? '\u25CF ' : ''} v-code`
       await setTitle(title)
     }
   },

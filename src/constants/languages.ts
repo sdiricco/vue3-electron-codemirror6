@@ -22,6 +22,7 @@ import { commonLisp } from "@codemirror/legacy-modes/mode/commonlisp";
 import { crystal } from "@codemirror/legacy-modes/mode/crystal";
 import { css, gss, less, sCSS } from "@codemirror/legacy-modes/mode/css";
 import { json, javascript, typescript } from "@codemirror/legacy-modes/mode/javascript";
+import { vue } from "@codemirror/lang-vue";
 
 export const languagesMap = [
   { label: "CMake", value: "cmake", iconPath: "assets/icons/file_type_cmake.svg", codemirror: StreamLanguage.define(cmake) },
@@ -36,68 +37,82 @@ export const languagesMap = [
 ];
 
 export enum Language {
-  c = 'c',
-  csharp = 'csharp',
-  cpp = 'c++',
-  css = 'css',
-  clojure = 'clojure',
-  javascript = 'javascript',
-  json = 'json',
-  html = 'html',
-  markdown = 'markdown',
-  python = 'python',
-  typescript = 'typescript',
+  c = "c",
+  csharp = "csharp",
+  cpp = "c++",
+  css = "css",
+  clojure = "clojure",
+  javascript = "javascript",
+  json = "json",
+  html = "html",
+  markdown = "markdown",
+  python = "python",
+  typescript = "typescript",
+  vue = "vue",
 }
 
 export const list: Array<Language> = [
-  Language.c, Language.csharp, Language.cpp, Language.css, Language.clojure, Language.javascript, Language.json, Language.html, Language.markdown, Language.python, Language.typescript
-]
+  Language.c,
+  Language.csharp,
+  Language.cpp,
+  Language.css,
+  Language.clojure,
+  Language.javascript,
+  Language.json,
+  Language.html,
+  Language.markdown,
+  Language.python,
+  Language.typescript,
+  Language.vue
+];
 
 export const labelMap = {
-  [Language.c]: 'C',
-  [Language.csharp]: 'C#',
-  [Language.cpp]: 'C++',
-  [Language.css]: 'CSS',
-  [Language.clojure]: 'Clojure',
-  [Language.javascript]: 'JavaScript',
-  [Language.json]: 'JSON',
-  [Language.html]: 'HTML',
-  [Language.markdown]: 'Markdown',
-  [Language.python]: 'Python',
-  [Language.typescript]: 'Typescript',
-}
+  [Language.c]: "C",
+  [Language.csharp]: "C#",
+  [Language.cpp]: "C++",
+  [Language.css]: "CSS",
+  [Language.clojure]: "Clojure",
+  [Language.javascript]: "JavaScript",
+  [Language.json]: "JSON",
+  [Language.html]: "HTML",
+  [Language.markdown]: "Markdown",
+  [Language.python]: "Python",
+  [Language.typescript]: "Typescript",
+  [Language.vue]: "Vue",
+};
 
-export const toLabel = (language: Language) => labelMap[language] || null
-
+export const toLabel = (language: Language) => labelMap[language] || null;
 
 export const iconMap = {
-  [Language.c]: 'assets/icons/file_type_c3.svg',
-  [Language.csharp]: 'assets/icons/file_type_csharp.svg',
-  [Language.cpp]: 'assets/icons/file_type_cpp3.svg',
-  [Language.css]: 'assets/icons/file_type_css.svg',
-  [Language.clojure]: 'assets/icons/file_type_clojure.svg',
-  [Language.javascript]: 'assets/icons/file_type_js.svg',
-  [Language.json]: 'assets/icons/file_type_json.svg',
-  [Language.html]: 'assets/icons/file_type_html.svg',
-  [Language.markdown]: 'assets/icons/file_type_markdown.svg',
-  [Language.python]: 'assets/icons/file_type_python.svg',
-  [Language.typescript]: 'assets/icons/file_type_typescript.svg',
-}
+  [Language.c]: "assets/icons/file_type_c3.svg",
+  [Language.csharp]: "assets/icons/file_type_csharp.svg",
+  [Language.cpp]: "assets/icons/file_type_cpp3.svg",
+  [Language.css]: "assets/icons/file_type_css.svg",
+  [Language.clojure]: "assets/icons/file_type_clojure.svg",
+  [Language.javascript]: "assets/icons/file_type_js.svg",
+  [Language.json]: "assets/icons/file_type_json.svg",
+  [Language.html]: "assets/icons/file_type_html.svg",
+  [Language.markdown]: "assets/icons/file_type_markdown.svg",
+  [Language.python]: "assets/icons/file_type_python.svg",
+  [Language.typescript]: "assets/icons/file_type_typescript.svg",
+  [Language.vue]: "assets/icons/file_type_vue.svg",
+};
 
-export const toIcon = (language: Language) => iconMap[language] || null
+export const toIcon = (language: Language) => iconMap[language] || null;
 
 export const codemirrorMap = {
   [Language.c]: StreamLanguage.define(c),
   [Language.csharp]: StreamLanguage.define(csharp),
   [Language.cpp]: StreamLanguage.define(cpp),
   [Language.css]: StreamLanguage.define(css),
-  [Language.clojure]:  StreamLanguage.define(clojure),
+  [Language.clojure]: StreamLanguage.define(clojure),
   [Language.javascript]: StreamLanguage.define(javascript),
   [Language.json]: StreamLanguage.define(json),
   [Language.html]: html({ autoCloseTags: true, selfClosingTags: true, matchClosingTags: true }),
   [Language.markdown]: markdown({ codeLanguages: languages }),
   [Language.python]: python(),
   [Language.typescript]: StreamLanguage.define(typescript),
-}
+  [Language.vue]: vue(),
+};
 
-export const toCodeMirror = (language: Language) => codemirrorMap[language] || null
+export const toCodeMirror = (language: Language) => codemirrorMap[language] || null;
