@@ -48,7 +48,10 @@ let extensions: Array<Extension> = [
   basicSetup,
   search({ top: true }),
   EditorView.updateListener.of(function(e) {
-    emit('input', e.state.doc.toString())
+    console.log(e)
+    if (e.docChanged) {
+      emit('input', e.state.doc.toString())
+    }
   }),
   themeConfig.of(props.theme? [props.theme] : []),
   languageConfig.of(props.language? [props.language] : []),

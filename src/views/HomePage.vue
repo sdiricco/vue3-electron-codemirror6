@@ -4,7 +4,8 @@
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
-      <Editor/>
+      <Editor v-if="mainStore.getActiveFile"/>
+      <WelcomePage v-if="!mainStore.getActiveFile"/>
     </SplitterPanel>
   </Splitter>
 
@@ -28,6 +29,7 @@ import ThemeMenu from "@/components/ThemeMenu.vue";
 import SideBar from "@/components/SideBar.vue";
 import Footer from "@/components/Footer.vue";
 import Editor from "@/components/Editor.vue";
+import WelcomePage from "@/components/WelcomePage.vue";
 import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";

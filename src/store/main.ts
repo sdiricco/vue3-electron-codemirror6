@@ -132,7 +132,10 @@ export const useMainStore = defineStore("main", {
         }
         //read file
         const file = await readFile(filePath);
-        console.log(file)
+        const tempFileList = JSONClone(this.tempFileList)
+        tempFileList.push(file);
+        this.tempFileList = tempFileList;
+        this.activeIndex = this.tempFileList.length - 1;
         return true;
       } catch (error) {
         console.log(error)

@@ -1,5 +1,5 @@
 <template>
-  <ul class="surface-card p-0 m-0 list-none flex select-none scroll-container"  >
+  <ul class="surface-card p-0 m-0 list-none flex select-none scroll-container" style="height: 40px;" >
     <li v-for="(file, index) in mainStore.tempFileList" :key="file?.path">
       <a
         style="height: 40px;"
@@ -43,8 +43,8 @@ function removeFile(file: any) {
 }
 
 .scroll-container::-webkit-scrollbar {
-  width: 4px; /* Larghezza della scrollbar */
-  height: 4px; /* Altezza della scrollbar orizzontale (se necessario) */
+  width: 6px; /* Larghezza della scrollbar */
+  height: 6px; /* Altezza della scrollbar orizzontale (se necessario) */
 }
 
 .scroll-container::-webkit-scrollbar-thumb {
@@ -53,6 +53,6 @@ function removeFile(file: any) {
 
 
 .scroll-container:hover{
-  overflow: overlay;
+  overflow-x: auto;
 }
 </style>

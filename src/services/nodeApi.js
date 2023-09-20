@@ -32,6 +32,7 @@ export async function readFile(filePath = "") {
   const language = languages && languages.length && languages[0]
 
   result.value = buffer.toString("utf8");
+  console.log('value: ', result.value)
   result.stat = await fsProm.stat(filePath);
   result.name = path.basename(filePath);
   result.path = filePath;

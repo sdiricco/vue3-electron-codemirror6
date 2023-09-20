@@ -23,6 +23,7 @@ const editorRef = ref<any>(null);
 const tempFilePath = computed(() => mainStore.getActiveFile && mainStore.getActiveFile.path);
 
 function onCodeMirrorChange(value:any){
+  console.log('onCodeMirrorChange', value)
   if (mainStore.tempFileList.length && mainStore.activeIndex >= 0) {
     mainStore.tempFileList[mainStore.activeIndex].value = value
   }
