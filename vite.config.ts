@@ -10,6 +10,7 @@ import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
 import path from 'path'
 
+
 rmSync('dist-electron', { recursive: true, force: true })
 const sourcemap = !!process.env.VSCODE_DEBUG
 const isBuild = process.argv.slice(2).includes('build')

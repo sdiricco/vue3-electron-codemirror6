@@ -4,10 +4,11 @@
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
-      <div v-show="mainStore.getActiveFile" style="height: calc(100% - 40px)">
+      <!-- <div v-show="mainStore.getActiveFile" style="height: calc(100% - 40px)">
         <Editor />
-      </div>
-      <WelcomePage v-if="!mainStore.getActiveFile"/>
+      </div> -->
+      <MonacoEditorVue/>
+      <!-- <WelcomePage v-if="!mainStore.getActiveFile"/> -->
     </SplitterPanel>
   </Splitter>
 
@@ -32,6 +33,7 @@ import SideBar from "@/components/SideBar.vue";
 import Footer from "@/components/Footer.vue";
 import Editor from "@/components/Editor.vue";
 import WelcomePage from "@/components/WelcomePage.vue";
+import MonacoEditorVue from "@/components/MonacoEditor.vue";
 import { onMenuAction } from "@/electronRenderer";
 import * as Types from "../types";
 import { useMainStore } from "@/store/main";
