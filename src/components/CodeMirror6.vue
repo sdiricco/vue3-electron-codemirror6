@@ -9,7 +9,6 @@ import { basicSetup, EditorView} from "codemirror";
 import { EditorState, Extension } from "@codemirror/state";
 import { Compartment } from '@codemirror/state'
 import { search } from "@codemirror/search";
-import { javascriptLanguage, jsxLanguage, typescriptLanguage, tsxLanguage, scopeCompletionSource, javascript } from "@codemirror/lang-javascript";
 
 
 

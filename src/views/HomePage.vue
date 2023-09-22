@@ -51,7 +51,7 @@ onMenuAction(async (data: any) => {
       await mainStore.openFolder();
       break;
     case Types.Menu.newFile:
-      await mainStore.newFile();
+      mainStore.addNewFile();
       break;
     case Types.Menu.openFile:
       await mainStore.openFile();
@@ -83,8 +83,11 @@ watch(isSomeFileChanged, mainStore.updateWindowTitle);
 
 
 onMounted(async () => {
+  explorer.value = false;
+  mainStore.addNewFile();
   await mainStore.updateWindowTitle();
   mainStore.updateWindowTitle();
+
 
 });
 </script>

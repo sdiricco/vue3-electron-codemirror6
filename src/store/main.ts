@@ -38,6 +38,22 @@ export const useMainStore = defineStore("main", {
       console.log('new file not supported')
     },
 
+    addNewFile(){
+      this.tempFileList.push({
+        name: "Untitled",
+        ext: "txt",
+        path: "",
+        value: "",
+        isChanged: false,
+        stat: {},
+        info: {
+          type: "file",
+          language:"text/plain"
+        }
+      })
+      this.activeIndex = this.tempFileList.length - 1;
+    },
+
     removeTempFile(file:any){
       const index = this.tempFileList.findIndex((f) => f.path === file.path);
       const tempFileList = JSONClone(this.tempFileList)

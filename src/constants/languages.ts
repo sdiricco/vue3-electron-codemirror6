@@ -8,6 +8,7 @@ import { python } from "@codemirror/lang-python";
 import { html } from "@codemirror/lang-html";
 // import { json } from "@codemirror/lang-json"
 
+
 /*********************************************************************************/
 /* LANGUAGES LEGACY IMPORTS */
 /*********************************************************************************/
@@ -23,6 +24,7 @@ import { crystal } from "@codemirror/legacy-modes/mode/crystal";
 import { css, gss, less, sCSS } from "@codemirror/legacy-modes/mode/css";
 import { json, javascript, typescript } from "@codemirror/legacy-modes/mode/javascript";
 import { vue } from "@codemirror/lang-vue";
+import { indentOnInput } from "@codemirror/language";
 
 export const languagesMap = [
   { label: "CMake", value: "cmake", iconPath: "assets/icons/file_type_cmake.svg", codemirror: StreamLanguage.define(cmake) },
@@ -49,6 +51,7 @@ export enum Language {
   python = "python",
   typescript = "typescript",
   vue = "vue",
+  textPlain = "text/plain",
 }
 
 export const list: Array<Language> = [
@@ -63,7 +66,8 @@ export const list: Array<Language> = [
   Language.markdown,
   Language.python,
   Language.typescript,
-  Language.vue
+  Language.vue,
+  Language.textPlain
 ];
 
 export const labelMap = {
@@ -79,6 +83,7 @@ export const labelMap = {
   [Language.python]: "Python",
   [Language.typescript]: "Typescript",
   [Language.vue]: "Vue",
+  [Language.textPlain]: "Text plain",
 };
 
 export const toLabel = (language: Language) => labelMap[language] || null;
@@ -96,6 +101,7 @@ export const iconMap = {
   [Language.python]: "assets/icons/file_type_python.svg",
   [Language.typescript]: "assets/icons/file_type_typescript.svg",
   [Language.vue]: "assets/icons/file_type_vue.svg",
+  [Language.textPlain]: "assets/icons/default_file.svg"
 };
 
 export const toIcon = (language: Language) => iconMap[language] || null;
@@ -113,6 +119,7 @@ export const codemirrorMap = {
   [Language.python]: python(),
   [Language.typescript]: StreamLanguage.define(typescript),
   [Language.vue]: vue(),
+  [Language.textPlain]: indentOnInput()
 };
 
 export const toCodeMirror = (language: Language) => codemirrorMap[language] || null;
