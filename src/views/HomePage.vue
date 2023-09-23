@@ -1,6 +1,6 @@
 <template>
   <Splitter style="border: none" class="panel">
-    <SplitterPanel :size="25" v-show="explorer">
+    <SplitterPanel :size="25" v-show="mainStore.showFileExplorer">
       <SideBar></SideBar>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
@@ -41,7 +41,6 @@ const languageMenuModalVisible = ref(false);
 const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const themeMenuModalVisible = ref(false);
-const explorer = ref(true);
 
 
 onMenuAction(async (data: any) => {
@@ -68,7 +67,7 @@ onMenuAction(async (data: any) => {
 
     //View
     case Types.Menu.toggleExplorer:
-      explorer.value = !explorer.value;
+      mainStore.showFileExplorer = !mainStore.showFileExplorer;
       break;
     default:
       break;
@@ -83,7 +82,6 @@ watch(isSomeFileChanged, mainStore.updateWindowTitle);
 
 
 onMounted(async () => {
-  explorer.value = false;
   mainStore.addNewFile();
   await mainStore.updateWindowTitle();
   mainStore.updateWindowTitle();

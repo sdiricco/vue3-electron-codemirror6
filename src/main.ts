@@ -77,6 +77,20 @@ import PrimeVue from "primevue/config";
 import StyleClass from "primevue/styleclass";
 import Ripple from "primevue/ripple";
 import BadgeDirective from "primevue/badgedirective";
+/*********************************************
+ * FONT AWESOME
+ *********************************************/
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+/* import specific icons */
+import { faUserSecret, faFileCirclePlus, faFolderOpen, faTableColumns, faPlus } from '@fortawesome/free-solid-svg-icons'
+
+/* add icons to the library */
+library.add(faUserSecret, faFileCirclePlus, faFolderOpen, faTableColumns, faPlus)
 
 // Plugins
 const pinia = createPinia();
@@ -96,6 +110,7 @@ app
 /*****************************************************************************/
 /* PRIME VUE - COMPONENTS */
 /*****************************************************************************/
+app.component('font-awesome-icon', FontAwesomeIcon)
 app.component("Accordion", Accordion);
 app.component("AccordionTab", AccordionTab);
 app.component("AutoComplete", AutoComplete);

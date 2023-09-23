@@ -11,6 +11,7 @@ export type RootState = {
   editorRef: any;
   tree: Array<any>;
   isTreeLoading: boolean;
+  showFileExplorer: boolean;
 };
 
 export const useMainStore = defineStore("main", {
@@ -20,7 +21,8 @@ export const useMainStore = defineStore("main", {
     folderPath: '',
     editorRef: ref(null),
     tree: [],
-    isTreeLoading: false
+    isTreeLoading: false,
+    showFileExplorer: false,
   }),
 
   getters: {

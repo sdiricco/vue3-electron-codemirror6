@@ -1,6 +1,6 @@
 {
   "name": "v-code",
-  "version": "2.0.4",
+  "version": "2.0.6",
   "main": "dist-electron/main/index.js",
   "description": "Simple editor using vue3 and codemirror6",
   "author": "Simone Di Ricco",
@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build && electron-builder",
-    "release": "gh release create v2.0.4 release/2.0.4/v-code-2.0.4.AppImage",
+    "release": "gh release create v$npm_package_version release/$npm_package_version/v-code-$npm_package_version.AppImage",
     "build-and-release": "yarn build && yarn release"
   },
   "engines": {
@@ -26,6 +26,11 @@
     "@codemirror/language-data": "^6.3.1",
     "@codemirror/legacy-modes": "^6.3.3",
     "@codemirror/theme-one-dark": "^6.1.0",
+    "@fortawesome/fontawesome-svg-core": "^6.1.2",
+    "@fortawesome/free-brands-svg-icons": "^6.1.2",
+    "@fortawesome/free-regular-svg-icons": "^6.1.2",
+    "@fortawesome/free-solid-svg-icons": "^6.1.2",
+    "@fortawesome/vue-fontawesome": "^3.0.1",
     "@mdi/font": "7.2.96",
     "chokidar": "^3.5.3",
     "cm6-theme-basic-dark": "^0.2.0",
@@ -42,7 +47,6 @@
     "lodash": "^4.17.21",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
-    "primevue": "^3.34.1",
     "ramda": "^0.29.0",
     "roboto-fontface": "*",
     "uuid": "^9.0.0"
