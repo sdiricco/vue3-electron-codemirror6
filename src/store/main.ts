@@ -128,6 +128,7 @@ export const useMainStore = defineStore("main", {
         this.isTreeLoading = true
         this.tree = await createTree(folderPath);
         this.isTreeLoading = false;
+        this.showFileExplorer = true;
         return true;
       } catch (error) {
         console.log(error)
