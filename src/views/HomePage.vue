@@ -1,9 +1,11 @@
 <template>
   <Splitter style="border: none" class="panel">
     <SplitterPanel :size="25" v-show="mainStore.showFileExplorer">
-      <SideBar></SideBar>
+      <!-- SIDEBAR -->
+      <Sidebar/>
     </SplitterPanel>
     <SplitterPanel :size="75" class="overflow-x-auto">
+      <!-- EDITOR -->
       <div v-show="mainStore.getActiveFile" style="height: calc(100% - 40px)">
         <Editor />
       </div>
@@ -28,7 +30,7 @@
 import { computed, ref, onMounted, watch } from "vue";
 import LanguageMenu from "@/components/LanguageMenu.vue";
 import ThemeMenu from "@/components/ThemeMenu.vue";
-import SideBar from "@/components/SideBar.vue";
+import Sidebar from "@/components/sidebar/Sidebar.vue";
 import Footer from "@/components/Footer.vue";
 import Editor from "@/components/Editor.vue";
 import WelcomePage from "@/components/WelcomePage.vue";
