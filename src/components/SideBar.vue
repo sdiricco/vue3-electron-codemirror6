@@ -74,7 +74,7 @@
       root: {
         class: 'p-0',
         style: {
-          height: 'calc(100% - 32px)',
+          height: 'calc(100% - 42px)',
         },
       },
       node: {

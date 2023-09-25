@@ -1,6 +1,6 @@
 {
   "name": "v-code",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "dist-electron/main/index.js",
   "description": "Simple editor using vue3 and codemirror6",
   "author": "Simone Di Ricco",
