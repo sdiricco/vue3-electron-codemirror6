@@ -31,6 +31,19 @@
     <Button
       @click="onRefreshTree"
       icon="pi pi-refresh"
+      class="text-color-secondary"
+      text
+      :pt="{
+        root: {
+          style: {
+            height: '1.5rem',
+            width: '1.5rem',
+          },
+        },
+      }" />
+    <Button
+      @click="mainStore.removeTree"
+      icon="pi pi-times"
       class="text-color-secondary mr-1"
       text
       :pt="{
@@ -42,7 +55,11 @@
         },
       }" />
   </div>
+  <div v-if="!mainStore.tree.length" class="m-1 mt-3">
+    <div class="text-color-secondary font-bold">No folder opened</div>
+  </div>
   <Tree
+    v-else
     class="custom-tree"
     @node-expand="onNodeExpand"
     @node-select="onNodeSelect"

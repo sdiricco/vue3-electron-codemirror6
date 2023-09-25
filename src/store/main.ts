@@ -126,6 +126,11 @@ export const useMainStore = defineStore("main", {
       this.isTreeLoading = false;
     },
 
+    removeTree(){
+      this.tree = [];
+      this.folderPath = '';
+    },
+
     //open file
     async openFolder() {
       let response = null;
