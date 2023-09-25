@@ -22,6 +22,7 @@ const mainStore = useMainStore();
 const settingsStore = useSettingsStore();
 const editorRef = ref<any>(null);
 const tempFilePath = computed(() => mainStore.getActiveFile && mainStore.getActiveFile.path);
+const activeIndex = computed(() => mainStore.activeIndex)
 
 function onCodeMirrorChange(value: any) {
   if (mainStore.tempFileList.length && mainStore.activeIndex >= 0) {
@@ -32,6 +33,21 @@ function onCodeMirrorChange(value: any) {
   }
 
 }
+
+
+
+watch(activeIndex, () => {
+  if (!mainStore.getActiveFile) {
+    return;
+  }
+  const value = mainStore.getActiveFile.value;
+  editorRef.value.updateValue(value);
+  const settingsStore = useSettingsStore();
+  const selectedLanguage = settingsStore.languages.find((l) => l.value === mainStore.getActiveFile.info.language);
+  if (selectedLanguage) {
+    settingsStore.selectedLanguageValue = selectedLanguage.value;
+  }
+})
 
 watch(tempFilePath, () => {
   if (!mainStore.getActiveFile) {

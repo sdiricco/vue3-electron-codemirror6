@@ -15,7 +15,7 @@
           </div>
 
           <Button
-            @click.stop="removeFile"
+            @click.stop="removeFile(index)"
             class="text-color-secondary"
             icon="pi pi-times"
             text

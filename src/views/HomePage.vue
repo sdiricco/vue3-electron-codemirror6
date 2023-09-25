@@ -82,7 +82,6 @@ watch(isSomeFileChanged, mainStore.updateWindowTitle);
 
 
 onMounted(async () => {
-  mainStore.addNewFile();
   await mainStore.updateWindowTitle();
   mainStore.updateWindowTitle();
 
