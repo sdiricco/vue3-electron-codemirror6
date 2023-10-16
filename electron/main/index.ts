@@ -58,13 +58,18 @@ async function createWindow() {
     },
   })
 
-  if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
-    win.loadURL(url)
-    await loadVueJSExtensionDevTools()
-    openDevTools(win)
-  } else {
-    win.loadFile(indexHtml)
+  try {
+    if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
+      win.loadURL(url)
+      await loadVueJSExtensionDevTools()
+      openDevTools(win)
+    } else {
+      win.loadFile(indexHtml)
+    }
+  } catch (e) {
+    console.error(`Error during open dev tools ${e.message}`)
   }
+
 
 
 

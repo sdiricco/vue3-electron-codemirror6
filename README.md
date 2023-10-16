@@ -1,6 +1,6 @@
+
+
 # Editor
-
-
 
 ![](./images/editor.png)
 
@@ -82,3 +82,7 @@ let state = EditorState.create({
   ],
 });
 ```
+
+# Prettier
+
+https://prettier.io/docs/en/api

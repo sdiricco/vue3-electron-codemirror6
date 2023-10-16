@@ -29,9 +29,12 @@ export async function loadVueJSExtensionDevTools(){
   let vueDevToolsPath = ''
   switch (process.platform) {
     case 'linux':
+      //Ubuntu '/.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.0_0/'
+      //Fedora '.var/app/com.google.Chrome/config/google-chrome/Profile 1/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.1_0'
       vueDevToolsPath = join(
         homedir(),
-        '/.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.0_0/'
+        '.var/app/com.google.Chrome/config/google-chrome/Profile 1/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.5.1_0'
+
       )
       break;
     default:
