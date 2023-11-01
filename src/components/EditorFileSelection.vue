@@ -42,6 +42,11 @@
         @click="mainStore.showFileExplorer = !mainStore.showFileExplorer">
         <font-awesome-icon icon="fa-solid fa-table-columns" />
       </div>
+      <div
+        class="cursor-pointer text-color-secondary p-1 border-round hover:surface-100 transition-colors transition-duration-150"
+        @click="mainStore.format">
+        <font-awesome-icon icon="fa-solid fa-align-left" />
+      </div>
     </div>
   </div>
 </template>

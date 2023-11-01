@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { createTree, openDialog, saveDialog, setTitle, updateDirectoryTree, watchDir, showMessageBox } from "@/electronRenderer";
 import { readFile, saveFile } from "@/services/nodeApi";
+import { formatFile} from "@/services/prettier"
 import { ref } from "vue";
 import { JSONClone } from "@/utils/helpers";
 
@@ -39,6 +40,12 @@ export const useMainStore = defineStore("main", {
     //new file
     async newFile() {
       console.log("new file not supported");
+    },
+
+    async format(){
+      const tempFileValue = this.tempFileList[this.activeIndex].value;
+      const fileFormatted = await formatFile(tempFileValue)
+      this.tempFileList[this.activeIndex].value = fileFormatted
     },
 
     addNewFile() {

@@ -88,10 +88,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faUserSecret, faFileCirclePlus, faFolderOpen, faTableColumns, faPlus, faFileImport, faFile } from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faFileCirclePlus, faFolderOpen, faTableColumns, faPlus, faFileImport, faFile, faAlignLeft } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
-library.add(faUserSecret, faFileCirclePlus, faFolderOpen, faTableColumns, faPlus, faFileImport, faFile)
+library.add(faUserSecret, faFileCirclePlus, faFolderOpen, faTableColumns, faPlus, faFileImport, faFile, faAlignLeft)
 
 // Plugins
 const pinia = createPinia();
